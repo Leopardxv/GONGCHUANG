@@ -30,7 +30,7 @@ AI-Enhanced Linux Online Learning Platform. Students practice Linux commands in 
 ### 1. Clone & Setup Backend
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/Leopardxv/GONGCHUANG.git
 cd linux-learning-system/backend
 
 # Create virtual environment

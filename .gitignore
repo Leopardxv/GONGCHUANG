@@ -10,6 +10,7 @@ __pycache__/
 # Build
 .next/
 dist/
+*.tsbuildinfo
 
 # IDE
 .idea/
