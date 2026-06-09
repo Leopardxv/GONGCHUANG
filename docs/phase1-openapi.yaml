@@ -1,0 +1,345 @@
+openapi: "3.0.3"
+info:
+  title: AI Linux Learning System — Phase 1 MVP
+  version: "0.1.0"
+  description: |
+    Phase 1 最小闭环：登录 → xterm.js → Docker → 命令执行 → AI 分析。
+    鉴权方式：JWT HttpOnly Cookie（Set-Cookie: access_token=...; HttpOnly; SameSite=Lax; Path=/）。
+    WebSocket 鉴权：复用 Cookie，禁止 query token。
+
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Local development
+
+tags:
+  - name: Auth
+    description: 注册 / 登录 / 登出 / 当前用户
+  - name: Terminal
+    description: WebSocket 终端连接
+  - name: AI
+    description: AI 命令分析
+
+paths:
+
+  # ── Auth ────────────────────────────────────────────
+
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: 用户注册
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: 注册成功，自动登录（Set-Cookie）
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: access_token HttpOnly cookie
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "409":
+          description: 用户名已存在
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: 用户登录
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: 登录成功
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: access_token HttpOnly cookie
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: 用户名或密码错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: 登出（清除 cookie）
+      operationId: logout
+      responses:
+        "204":
+          description: 已登出，cookie 被清除
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: 获取当前登录用户信息
+      operationId: getCurrentUser
+      security:
+        - CookieAuth: []
+      responses:
+        "200":
+          description: 当前用户信息
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: 未登录
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ── AI ─────────────────────────────────────────────
+
+  /ai/analyze-command:
+    post:
+      tags: [AI]
+      summary: 分析终端命令（异步触发，不阻塞 terminal）
+      operationId: analyzeCommand
+      security:
+        - CookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommandAnalysisRequest"
+      responses:
+        "200":
+          description: 分析结果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommandAnalysisResponse"
+        "401":
+          description: 未登录
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "429":
+          description: AI 请求频率超限
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "502":
+          description: AI 上游服务不可用
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ── Terminal WebSocket ─────────────────────────────
+  # OpenAPI 3.0 对 WebSocket 支持有限，此处用语义描述
+
+  /terminal/connect:
+    get:
+      tags: [Terminal]
+      summary: WebSocket 终端连接（升级）
+      description: |
+        升级 HTTP → WebSocket。鉴权通过 Cookie 中的 access_token。
+        建立连接后，后端自动确保用户 Docker 容器处于 running 状态，
+        并创建 persistent bash exec session（非逐条 exec），
+        保证 cd / pwd / env 连续性。
+
+        **Client → Server 消息：**
+
+        - `{"type":"input","data":"<keystrokes>"}` — 终端原始输入
+        - `{"type":"resize","cols":80,"rows":24}` — 窗口大小变更
+        - `{"type":"command","text":"ls -la"}` — 显式命令通知（用于日志/AI 触发）
+        - `{"type":"ping"}` — 心跳
+
+        **Server → Client 消息：**
+
+        - `{"type":"output","data":"<terminal output>"}` — 终端原始输出
+        - `{"type":"session","status":"connected","container_id":"...","user":"student"}` — 会话就绪
+        - `{"type":"error","message":"..."}` — 错误信息
+        - `{"type":"ai_analysis","analysis":{...}}` — AI 分析结果（异步推送）
+        - `{"type":"pong"}` — 心跳应答
+
+        **重连：** 客户端断开后 60 秒内可用相同 cookie 重连，回到同一容器的新 bash session。
+        home 目录通过 Docker volume 持久化，文件不丢失。
+
+      security:
+        - CookieAuth: []
+      responses:
+        "101":
+          description: WebSocket 升级成功
+
+# ── Components ──────────────────────────────────────
+
+components:
+
+  securitySchemes:
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: access_token
+      description: JWT token in HttpOnly cookie
+
+  schemas:
+
+    # ── Auth ──
+
+    RegisterRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 64
+          pattern: '^[a-zA-Z0-9_-]+$'
+          example: "student01"
+        password:
+          type: string
+          minLength: 6
+          maxLength: 128
+          format: password
+        role:
+          type: string
+          enum: [student, teacher]
+          default: student
+      example:
+        username: "student01"
+        password: "securePass123"
+        role: "student"
+
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          example: "student01"
+        password:
+          type: string
+          format: password
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        role:
+          type: string
+          enum: [student, teacher]
+        status:
+          type: string
+          enum: [active, inactive]
+        created_at:
+          type: string
+          format: date-time
+
+    # ── AI ──
+
+    CommandAnalysisRequest:
+      type: object
+      required: [command]
+      properties:
+        command:
+          type: string
+          description: 用户执行的完整命令
+          example: "cd aa"
+        stdout:
+          type: string
+          default: ""
+          description: 命令标准输出（可选，用于错误分析）
+        stderr:
+          type: string
+          default: ""
+          description: 命令标准错误输出
+        exit_code:
+          type: integer
+          nullable: true
+          description: 命令退出码（若可获取）
+        cwd:
+          type: string
+          default: "/home/student"
+          description: 执行时工作目录
+        context:
+          type: array
+          items:
+            type: string
+          maxItems: 5
+          description: 最近 5 条历史命令（可选，用于上下文理解）
+          example: ["ls -l", "pwd", "mkdir test"]
+
+    CommandAnalysisResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        command_explanation:
+          type: string
+          description: 命令功能解释
+          example: "cd (change directory) 用于切换当前工作目录。"
+        syntax_fix:
+          type: string
+          nullable: true
+          description: 语法修正建议（语法正确时为 null）
+          example: "命令语法正确，但目标目录不存在。"
+        error_reason:
+          type: string
+          nullable: true
+          description: 错误原因分析（无错误时为 null）
+          example: "目录 'aa' 不存在于当前路径下，导致 cd 命令失败。"
+        best_practice:
+          type: string
+          description: 最佳实践建议
+          example: "切换目录前，建议先用 ls 查看当前目录内容，确认目标目录存在。"
+        learning_recommendation:
+          type: string
+          description: 学习建议
+          example: "建议重点学习 Linux 文件系统结构、绝对路径与相对路径的区别。"
+        related_section_id:
+          type: string
+          nullable: true
+          description: 关联教材章节 ID（Phase 2 启用跳转，Phase 1 仅展示文字推荐）
+          example: "chapter_3_filesystem"
+
+    # ── Common ──
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: 机器可读错误码
+          example: "unauthorized"
+        message:
+          type: string
+          description: 人类可读错误信息
+          example: "用户名或密码错误"
+        detail:
+          type: string
+          description: 可选的详细信息

@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# Env
+.env
+!.env.example
+
+# Build
+.next/
+dist/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes
+docker/volumes/
+
+# Python virtual env
+.venv/
+venv/
+
+# Alembic
+backend/alembic/versions/*.pyc

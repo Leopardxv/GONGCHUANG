@@ -1,0 +1,1308 @@
+[
+  {
+    "chapter": 1,
+    "title": "Overview",
+    "page": 1,
+    "sections": [
+      {
+        "number": "1.1",
+        "title": "OSs and the ICT Era",
+        "page": 1,
+        "subsections": []
+      },
+      {
+        "number": "1.2",
+        "title": "Origin of OSs",
+        "page": 2,
+        "subsections": [
+          {
+            "number": "1.2.1",
+            "title": "The Multics Project",
+            "page": 2
+          },
+          {
+            "number": "1.2.2",
+            "title": "Birth of UNIX",
+            "page": 2
+          }
+        ]
+      },
+      {
+        "number": "1.3",
+        "title": "Evolution of OSs",
+        "page": 4,
+        "subsections": [
+          {
+            "number": "1.3.1",
+            "title": "Evolution of UNIX: From Academic Freedom to Copyright Battles",
+            "page": 4
+          },
+          {
+            "number": "1.3.2",
+            "title": "Rise of Desktop OSs",
+            "page": 6
+          },
+          {
+            "number": "1.3.3",
+            "title": "Open Source Innovation of GNU/Linux",
+            "page": 8
+          },
+          {
+            "number": "1.3.4",
+            "title": "OSs in the ICT Era",
+            "page": 9
+          }
+        ]
+      },
+      {
+        "number": "1.4",
+        "title": "openEuler’s New Ecosystem",
+        "page": 12,
+        "subsections": [
+          {
+            "number": "1.4.1",
+            "title": "openEuler Overview",
+            "page": 12
+          },
+          {
+            "number": "1.4.2",
+            "title": "openEuler Community",
+            "page": 13
+          },
+          {
+            "number": "1.4.3",
+            "title": "openEuler Software Ecosystem",
+            "page": 14
+          }
+        ]
+      },
+      {
+        "number": "1.5",
+        "title": "Summary",
+        "page": 15,
+        "subsections": []
+      }
+    ]
+  },
+  {
+    "chapter": 2,
+    "title": "Introduction to Operating Systems",
+    "page": 17,
+    "sections": [
+      {
+        "number": "2.1",
+        "title": "Basic Components of OSs",
+        "page": 17,
+        "subsections": [
+          {
+            "number": "2.1.1",
+            "title": "Typical Architecture",
+            "page": 18
+          },
+          {
+            "number": "2.1.2",
+            "title": "Kernel and System Call Interface",
+            "page": 19
+          },
+          {
+            "number": "2.1.3",
+            "title": "Applications",
+            "page": 20
+          },
+          {
+            "number": "2.1.4",
+            "title": "User Interfaces",
+            "page": 26
+          }
+        ]
+      },
+      {
+        "number": "2.2",
+        "title": "Overview of Modern OSs",
+        "page": 30,
+        "subsections": [
+          {
+            "number": "2.2.1",
+            "title": "Desktop OSs",
+            "page": 30
+          },
+          {
+            "number": "2.2.2",
+            "title": "Server OSs",
+            "page": 30
+          },
+          {
+            "number": "2.2.3",
+            "title": "Embedded OSs",
+            "page": 31
+          }
+        ]
+      },
+      {
+        "number": "2.3",
+        "title": "Outstanding Features of GNU/Linux",
+        "page": 31,
+        "subsections": [
+          {
+            "number": "2.3.1",
+            "title": "UNIX Design Philosophy Legacy",
+            "page": 32
+          },
+          {
+            "number": "2.3.2",
+            "title": "Freedom and Openness",
+            "page": 33
+          }
+        ]
+      },
+      {
+        "number": "2.4",
+        "title": "Introduction to openEuler",
+        "page": 36,
+        "subsections": [
+          {
+            "number": "2.4.1",
+            "title": "Architecture",
+            "page": 36
+          },
+          {
+            "number": "2.4.2",
+            "title": "Innovative Features",
+            "page": 37
+          },
+          {
+            "number": "2.4.3",
+            "title": "Open Source Contributions",
+            "page": 38
+          }
+        ]
+      },
+      {
+        "number": "2.5",
+        "title": "Hands-On with openEuler",
+        "page": 39,
+        "subsections": [
+          {
+            "number": "2.5.1",
+            "title": "Huawei Cloud",
+            "page": 39
+          },
+          {
+            "number": "2.5.2",
+            "title": "VMware Setup",
+            "page": 39
+          },
+          {
+            "number": "2.5.3",
+            "title": "Docker Container Deployment",
+            "page": 40
+          }
+        ]
+      },
+      {
+        "number": "2.6",
+        "title": "Summary",
+        "page": 40,
+        "subsections": []
+      }
+    ]
+  },
+  {
+    "chapter": 3,
+    "title": "Getting Started with openEuler",
+    "page": 43,
+    "sections": [
+      {
+        "number": "3.1",
+        "title": "Interaction Interfaces",
+        "page": 44,
+        "subsections": [
+          {
+            "number": "3.1.1",
+            "title": "GUI",
+            "page": 44
+          },
+          {
+            "number": "3.1.2",
+            "title": "CLI",
+            "page": 47
+          }
+        ]
+      },
+      {
+        "number": "3.2",
+        "title": "Using the CLI",
+        "page": 48,
+        "subsections": [
+          {
+            "number": "3.2.1",
+            "title": "Console and Terminal",
+            "page": 48
+          },
+          {
+            "number": "3.2.2",
+            "title": "System Login",
+            "page": 49
+          },
+          {
+            "number": "3.2.3",
+            "title": "Remote Login",
+            "page": 50
+          },
+          {
+            "number": "3.2.4",
+            "title": "Command Usage",
+            "page": 52
+          },
+          {
+            "number": "3.2.5",
+            "title": "Getting Help",
+            "page": 54
+          }
+        ]
+      },
+      {
+        "number": "3.3",
+        "title": "Basic Command-Line Operations",
+        "page": 57,
+        "subsections": [
+          {
+            "number": "3.3.1",
+            "title": "Directory Manipulation",
+            "page": 58
+          },
+          {
+            "number": "3.3.2",
+            "title": "File Viewing",
+            "page": 64
+          },
+          {
+            "number": "3.3.3",
+            "title": "File Management",
+            "page": 71
+          },
+          {
+            "number": "3.3.4",
+            "title": "File Search",
+            "page": 76
+          },
+          {
+            "number": "3.3.5",
+            "title": "System Information Query",
+            "page": 79
+          },
+          {
+            "number": "3.3.6",
+            "title": "System Management",
+            "page": 82
+          }
+        ]
+      },
+      {
+        "number": "3.4",
+        "title": "Shells: Unleashing Command-Line Power",
+        "page": 83,
+        "subsections": [
+          {
+            "number": "3.4.1",
+            "title": "Introduction to Bash",
+            "page": 84
+          },
+          {
+            "number": "3.4.2",
+            "title": "Environment Variables",
+            "page": 84
+          },
+          {
+            "number": "3.4.3",
+            "title": "Wildcards and Auto-Completion",
+            "page": 87
+          },
+          {
+            "number": "3.4.4",
+            "title": "Command Combination",
+            "page": 88
+          },
+          {
+            "number": "3.4.5",
+            "title": "Redirection",
+            "page": 90
+          },
+          {
+            "number": "3.4.6",
+            "title": "Pipes",
+            "page": 93
+          },
+          {
+            "number": "3.4.7",
+            "title": "Extended Commands",
+            "page": 96
+          },
+          {
+            "number": "3.4.8",
+            "title": "Command-Line Editing",
+            "page": 98
+          }
+        ]
+      },
+      {
+        "number": "3.5",
+        "title": "Users and Permissions",
+        "page": 99,
+        "subsections": [
+          {
+            "number": "3.5.1",
+            "title": "User Model",
+            "page": 100
+          },
+          {
+            "number": "3.5.2",
+            "title": "Switching Users",
+            "page": 100
+          },
+          {
+            "number": "3.5.3",
+            "title": "Permission Model",
+            "page": 101
+          },
+          {
+            "number": "3.5.4",
+            "title": "Permission Modification",
+            "page": 103
+          },
+          {
+            "number": "3.5.5",
+            "title": "Ownership Modification",
+            "page": 104
+          }
+        ]
+      },
+      {
+        "number": "3.6",
+        "title": "DDE Installation",
+        "page": 104,
+        "subsections": []
+      }
+    ]
+  },
+  {
+    "chapter": 4,
+    "title": "OS Principles and Practice",
+    "page": 107,
+    "sections": [
+      {
+        "number": "4.1",
+        "title": "OS Design Philosophy",
+        "page": 108,
+        "subsections": []
+      },
+      {
+        "number": "4.2",
+        "title": "File Management",
+        "page": 110,
+        "subsections": [
+          {
+            "number": "4.2.1",
+            "title": "File Tree",
+            "page": 110
+          },
+          {
+            "number": "4.2.2",
+            "title": "Virtual File System",
+            "page": 115
+          },
+          {
+            "number": "4.2.3",
+            "title": "Introduction to EulerFS",
+            "page": 116
+          },
+          {
+            "number": "4.2.4",
+            "title": "Example 4.1: File System Operations",
+            "page": 117
+          }
+        ]
+      },
+      {
+        "number": "4.3",
+        "title": "Memory Management",
+        "page": 119,
+        "subsections": [
+          {
+            "number": "4.3.1",
+            "title": "Memory Protection",
+            "page": 120
+          },
+          {
+            "number": "4.3.2",
+            "title": "Virtual Memory Management",
+            "page": 123
+          },
+          {
+            "number": "4.3.3",
+            "title": "openEuler Memory Technologies",
+            "page": 125
+          },
+          {
+            "number": "4.3.4",
+            "title": "Example 4.2: Memory Information Analysis",
+            "page": 126
+          }
+        ]
+      },
+      {
+        "number": "4.4",
+        "title": "Process Management",
+        "page": 127,
+        "subsections": [
+          {
+            "number": "4.4.1",
+            "title": "Parallelization Strategies",
+            "page": 128
+          },
+          {
+            "number": "4.4.2",
+            "title": "Process Creation",
+            "page": 129
+          },
+          {
+            "number": "4.4.3",
+            "title": "Process Scheduling",
+            "page": 131
+          },
+          {
+            "number": "4.4.4",
+            "title": "IPC",
+            "page": 132
+          },
+          {
+            "number": "4.4.5",
+            "title": "Thread Abstraction",
+            "page": 134
+          },
+          {
+            "number": "4.4.6",
+            "title": "openEuler Process Technologies",
+            "page": 136
+          },
+          {
+            "number": "4.4.7",
+            "title": "Example 4.3: Process Monitoring and Management",
+            "page": 138
+          }
+        ]
+      },
+      {
+        "number": "4.5",
+        "title": "Summary",
+        "page": 141,
+        "subsections": []
+      }
+    ]
+  },
+  {
+    "chapter": 5,
+    "title": "openEuler Development Environment",
+    "page": 143,
+    "sections": [
+      {
+        "number": "5.1",
+        "title": "Text Processing",
+        "page": 144,
+        "subsections": [
+          {
+            "number": "5.1.1",
+            "title": "Vim",
+            "page": 145
+          },
+          {
+            "number": "5.1.2",
+            "title": "Nano",
+            "page": 151
+          },
+          {
+            "number": "5.1.3",
+            "title": "Text Searching",
+            "page": 152
+          },
+          {
+            "number": "5.1.4",
+            "title": "Text Replacement and Automated Editing",
+            "page": 155
+          },
+          {
+            "number": "5.1.5",
+            "title": "Text Analysis",
+            "page": 157
+          },
+          {
+            "number": "5.1.6",
+            "title": "Text Formatting",
+            "page": 160
+          },
+          {
+            "number": "5.1.7",
+            "title": "Using Git for Version Control",
+            "page": 162
+          }
+        ]
+      },
+      {
+        "number": "5.2",
+        "title": "Shell Scripting",
+        "page": 163,
+        "subsections": [
+          {
+            "number": "5.2.1",
+            "title": "Number-Guessing Game",
+            "page": 164
+          },
+          {
+            "number": "5.2.2",
+            "title": "Variables",
+            "page": 166
+          },
+          {
+            "number": "5.2.3",
+            "title": "Expressions",
+            "page": 168
+          },
+          {
+            "number": "5.2.4",
+            "title": "Branch Structures",
+            "page": 169
+          },
+          {
+            "number": "5.2.5",
+            "title": "Loop Structures",
+            "page": 171
+          },
+          {
+            "number": "5.2.6",
+            "title": "Functions",
+            "page": 174
+          },
+          {
+            "number": "5.2.7",
+            "title": "Project 5-1: Install-Help Command",
+            "page": 174
+          }
+        ]
+      },
+      {
+        "number": "5.3",
+        "title": "C/C++ Application Development",
+        "page": 175,
+        "subsections": [
+          {
+            "number": "5.3.1",
+            "title": "my-nl",
+            "page": 175
+          },
+          {
+            "number": "5.3.2",
+            "title": "Compilation and Debugging",
+            "page": 176
+          },
+          {
+            "number": "5.3.3",
+            "title": "Building with Makefiles",
+            "page": 181
+          },
+          {
+            "number": "5.3.4",
+            "title": "Building with CMake",
+            "page": 183
+          },
+          {
+            "number": "5.3.6",
+            "title": "Performance Optimization",
+            "page": 188
+          },
+          {
+            "number": "5.3.7",
+            "title": "Project 5-2: my-utils Toolbox",
+            "page": 190
+          }
+        ]
+      },
+      {
+        "number": "5.4",
+        "title": "Portability Development and Docker Container Deployment",
+        "page": 190,
+        "subsections": [
+          {
+            "number": "5.4.1",
+            "title": "POSIX Portability",
+            "page": 191
+          },
+          {
+            "number": "5.4.2",
+            "title": "C/C++ Portability",
+            "page": 193
+          },
+          {
+            "number": "5.4.3",
+            "title": "Docker Container Portability",
+            "page": 194
+          },
+          {
+            "number": "5.4.4",
+            "title": "openEuler Multi-Scenario Portability",
+            "page": 199
+          },
+          {
+            "number": "5.4.5",
+            "title": "Project 5-3: Cross-Platform Building of my-utils",
+            "page": 199
+          }
+        ]
+      },
+      {
+        "number": "5.5",
+        "title": "Learning in Open Source Communities",
+        "page": 199,
+        "subsections": [
+          {
+            "number": "5.5.1",
+            "title": "Linux and Open Source",
+            "page": 200
+          },
+          {
+            "number": "5.5.2",
+            "title": "openEuler Community",
+            "page": 201
+          }
+        ]
+      },
+      {
+        "number": "5.6",
+        "title": "Summary",
+        "page": 201,
+        "subsections": []
+      }
+    ]
+  },
+  {
+    "chapter": 6,
+    "title": "Embedded OS Development",
+    "page": 203,
+    "sections": [
+      {
+        "number": "6.1",
+        "title": "Introduction to Embedded OSs",
+        "page": 203,
+        "subsections": [
+          {
+            "number": "6.1.1",
+            "title": "Software Architecture of Embedded Systems",
+            "page": 204
+          },
+          {
+            "number": "6.1.2",
+            "title": "Key Characteristics",
+            "page": 205
+          },
+          {
+            "number": "6.1.3",
+            "title": "Common Embedded OSs",
+            "page": 206
+          }
+        ]
+      },
+      {
+        "number": "6.2",
+        "title": "Embedded Linux",
+        "page": 207,
+        "subsections": [
+          {
+            "number": "6.2.1",
+            "title": "Embedded Linux Development Process",
+            "page": 207
+          },
+          {
+            "number": "6.2.2",
+            "title": "Example 6.1: Embedded Development Environment Setup",
+            "page": 209
+          }
+        ]
+      },
+      {
+        "number": "6.3",
+        "title": "Linux Kernel Customization and Development",
+        "page": 212,
+        "subsections": [
+          {
+            "number": "6.3.1",
+            "title": "Introduction to the Linux Kernel",
+            "page": 213
+          },
+          {
+            "number": "6.3.2",
+            "title": "Kernel Build Mechanism",
+            "page": 216
+          },
+          {
+            "number": "6.3.3",
+            "title": "Example 6.2: Kernel Compilation and QEMU Emulation",
+            "page": 216
+          }
+        ]
+      },
+      {
+        "number": "6.4",
+        "title": "Root File System Development",
+        "page": 219,
+        "subsections": [
+          {
+            "number": "6.4.1",
+            "title": "Introduction to BusyBox",
+            "page": 219
+          },
+          {
+            "number": "6.4.2",
+            "title": "Example 6.3: Root File System Compilation and QEMU Emulation",
+            "page": 220
+          }
+        ]
+      },
+      {
+        "number": "6.5",
+        "title": "openEuler Embedded",
+        "page": 223,
+        "subsections": [
+          {
+            "number": "6.5.1",
+            "title": "Technical Architecture and Key Features",
+            "page": 224
+          },
+          {
+            "number": "6.5.2",
+            "title": "Building with oebuild",
+            "page": 226
+          },
+          {
+            "number": "6.5.3",
+            "title": "Example 6.4: Build and Emulation of openEuler Embedded with QEMU",
+            "page": 227
+          },
+          {
+            "number": "6.5.4",
+            "title": "Embedded ROS Runtime",
+            "page": 227
+          },
+          {
+            "number": "6.5.5",
+            "title": "Soft Real-Time Capabilities",
+            "page": 229
+          }
+        ]
+      },
+      {
+        "number": "6.6",
+        "title": "Summary",
+        "page": 230,
+        "subsections": []
+      }
+    ]
+  },
+  {
+    "chapter": 7,
+    "title": "Network Basics and Management",
+    "page": 233,
+    "sections": [
+      {
+        "number": "7.1",
+        "title": "TCP/IP Network Model",
+        "page": 233,
+        "subsections": [
+          {
+            "number": "7.1.1",
+            "title": "IP Addresses",
+            "page": 236
+          },
+          {
+            "number": "7.1.3",
+            "title": "Sockets",
+            "page": 239
+          },
+          {
+            "number": "7.1.4",
+            "title": "Socket API",
+            "page": 240
+          }
+        ]
+      },
+      {
+        "number": "7.2",
+        "title": "Network Management Basics",
+        "page": 243,
+        "subsections": [
+          {
+            "number": "7.2.1",
+            "title": "Basic Concepts",
+            "page": 243
+          },
+          {
+            "number": "7.2.2",
+            "title": "Host Names",
+            "page": 245
+          },
+          {
+            "number": "7.2.3",
+            "title": "Network Interface Names",
+            "page": 246
+          }
+        ]
+      },
+      {
+        "number": "7.3",
+        "title": "Network Management",
+        "page": 247,
+        "subsections": [
+          {
+            "number": "7.3.1",
+            "title": "Tools",
+            "page": 247
+          },
+          {
+            "number": "7.3.2",
+            "title": "Connection Configuration",
+            "page": 252
+          },
+          {
+            "number": "7.3.3",
+            "title": "ifcfg Files",
+            "page": 254
+          },
+          {
+            "number": "7.3.4",
+            "title": "Route Configuration",
+            "page": 255
+          },
+          {
+            "number": "7.3.5",
+            "title": "Network Diagnosis",
+            "page": 256
+          },
+          {
+            "number": "7.3.6",
+            "title": "Example 7.1: VLAN Creation",
+            "page": 258
+          }
+        ]
+      },
+      {
+        "number": "7.4",
+        "title": "Firewalls",
+        "page": 260,
+        "subsections": [
+          {
+            "number": "7.4.1",
+            "title": "iptables",
+            "page": 261
+          },
+          {
+            "number": "7.4.2",
+            "title": "firewalld",
+            "page": 263
+          },
+          {
+            "number": "7.4.3",
+            "title": "Example 7.2: firewalld Configuration",
+            "page": 267
+          }
+        ]
+      },
+      {
+        "number": "7.5",
+        "title": "Classic Network Tools",
+        "page": 269,
+        "subsections": [
+          {
+            "number": "7.5.1",
+            "title": "SSH",
+            "page": 269
+          },
+          {
+            "number": "7.5.2",
+            "title": "wget",
+            "page": 272
+          },
+          {
+            "number": "7.5.3",
+            "title": "cURL",
+            "page": 272
+          },
+          {
+            "number": "7.5.4",
+            "title": "tcpdump",
+            "page": 274
+          },
+          {
+            "number": "7.5.5",
+            "title": "netcat",
+            "page": 275
+          },
+          {
+            "number": "7.5.6",
+            "title": "Nmap",
+            "page": 276
+          }
+        ]
+      },
+      {
+        "number": "7.6",
+        "title": "Summary",
+        "page": 277,
+        "subsections": []
+      }
+    ]
+  },
+  {
+    "chapter": 8,
+    "title": "Server OS Management",
+    "page": 279,
+    "sections": [
+      {
+        "number": "8.1",
+        "title": "Typical Server OSs",
+        "page": 280,
+        "subsections": [
+          {
+            "number": "8.1.1",
+            "title": "Windows Server",
+            "page": 280
+          },
+          {
+            "number": "8.1.2",
+            "title": "Popular Linux Distributions for Servers",
+            "page": 281
+          },
+          {
+            "number": "8.1.3",
+            "title": "The Rise of openEuler",
+            "page": 282
+          }
+        ]
+      },
+      {
+        "number": "8.2",
+        "title": "Users and User Groups",
+        "page": 283,
+        "subsections": [
+          {
+            "number": "8.2.1",
+            "title": "User Management",
+            "page": 284
+          },
+          {
+            "number": "8.2.2",
+            "title": "User Group Management",
+            "page": 286
+          },
+          {
+            "number": "8.2.3",
+            "title": "Example 8.1: Batch User Creation",
+            "page": 287
+          }
+        ]
+      },
+      {
+        "number": "8.3",
+        "title": "Drives and Logical V olumes",
+        "page": 287,
+        "subsections": [
+          {
+            "number": "8.3.1",
+            "title": "Drive Partitions",
+            "page": 288
+          },
+          {
+            "number": "8.3.2",
+            "title": "MBR and GPT",
+            "page": 288
+          },
+          {
+            "number": "8.3.3",
+            "title": "Example 8.2: Partition Creation and Mounting",
+            "page": 289
+          },
+          {
+            "number": "8.3.4",
+            "title": "LVs",
+            "page": 292
+          },
+          {
+            "number": "8.3.5",
+            "title": "Example 8.3: LV Creation and Mounting",
+            "page": 293
+          }
+        ]
+      },
+      {
+        "number": "8.4",
+        "title": "Software Packages",
+        "page": 296,
+        "subsections": [
+          {
+            "number": "8.4.1",
+            "title": "Package Management with RPM",
+            "page": 297
+          },
+          {
+            "number": "8.4.2",
+            "title": "Package Management with DNF",
+            "page": 298
+          }
+        ]
+      },
+      {
+        "number": "8.5",
+        "title": "System Services",
+        "page": 302,
+        "subsections": [
+          {
+            "number": "8.5.1",
+            "title": "systemd",
+            "page": 302
+          },
+          {
+            "number": "8.5.2",
+            "title": "systemctl",
+            "page": 303
+          },
+          {
+            "number": "8.5.3",
+            "title": ".service Files",
+            "page": 304
+          },
+          {
+            "number": "8.5.4",
+            "title": "SSH Service",
+            "page": 306
+          },
+          {
+            "number": "8.5.5",
+            "title": "Example 8.4: LAMP Stack Installation",
+            "page": 307
+          }
+        ]
+      },
+      {
+        "number": "8.6",
+        "title": "Scheduled Tasks",
+        "page": 308,
+        "subsections": [
+          {
+            "number": "8.6.1",
+            "title": "One-Time Tasks",
+            "page": 309
+          },
+          {
+            "number": "8.6.2",
+            "title": "Periodic Tasks",
+            "page": 309
+          }
+        ]
+      },
+      {
+        "number": "8.7",
+        "title": "System Security",
+        "page": 311,
+        "subsections": [
+          {
+            "number": "8.7.1",
+            "title": "Root Privileges",
+            "page": 311
+          },
+          {
+            "number": "8.7.2",
+            "title": "Special File Permissions",
+            "page": 312
+          },
+          {
+            "number": "8.7.3",
+            "title": "SELinux",
+            "page": 314
+          },
+          {
+            "number": "8.7.4",
+            "title": "Logging System",
+            "page": 315
+          },
+          {
+            "number": "8.7.5",
+            "title": "Security Auditing",
+            "page": 321
+          }
+        ]
+      },
+      {
+        "number": "8.8",
+        "title": "System Administration and Maintenance Examples",
+        "page": 322,
+        "subsections": [
+          {
+            "number": "8.8.1",
+            "title": "Example 8.5: System Management with Cockpit",
+            "page": 322
+          },
+          {
+            "number": "8.8.2",
+            "title": "Example 8.6: WordPress Blog Setup",
+            "page": 324
+          }
+        ]
+      },
+      {
+        "number": "8.9",
+        "title": "Summary",
+        "page": 329,
+        "subsections": []
+      }
+    ]
+  },
+  {
+    "chapter": 9,
+    "title": "Open-Source Innovation Within openEuler",
+    "page": 331,
+    "sections": [
+      {
+        "number": "9.1",
+        "title": "Kernel",
+        "page": 332,
+        "subsections": [
+          {
+            "number": "9.1.1",
+            "title": "SMT Expeller Free of Priority Inversion",
+            "page": 333
+          },
+          {
+            "number": "9.1.2",
+            "title": "CPU QoS Priority-Based Load Balancing",
+            "page": 333
+          },
+          {
+            "number": "9.1.3",
+            "title": "Tidal Affinity",
+            "page": 334
+          }
+        ]
+      },
+      {
+        "number": "9.2",
+        "title": "Fundamental Capabilities",
+        "page": 334,
+        "subsections": [
+          {
+            "number": "9.2.1",
+            "title": "Lightweight Container Engine",
+            "page": 335
+          },
+          {
+            "number": "9.2.2",
+            "title": "Virtualization",
+            "page": 337
+          },
+          {
+            "number": "9.2.3",
+            "title": "High-Performance Service Management",
+            "page": 338
+          },
+          {
+            "number": "9.2.4",
+            "title": "Kernel Live Upgrade",
+            "page": 339
+          },
+          {
+            "number": "9.2.5",
+            "title": "Security and Reliability",
+            "page": 342
+          }
+        ]
+      },
+      {
+        "number": "9.3",
+        "title": "Scenario Enablement",
+        "page": 346,
+        "subsections": [
+          {
+            "number": "9.3.1",
+            "title": "Server",
+            "page": 347
+          },
+          {
+            "number": "9.3.2",
+            "title": "Cloud",
+            "page": 351
+          },
+          {
+            "number": "9.3.3",
+            "title": "Embedded",
+            "page": 355
+          },
+          {
+            "number": "9.3.4",
+            "title": "Edge",
+            "page": 358
+          }
+        ]
+      },
+      {
+        "number": "9.4",
+        "title": "Toolchains",
+        "page": 360,
+        "subsections": [
+          {
+            "number": "9.4.1",
+            "title": "GCC for openEuler",
+            "page": 360
+          },
+          {
+            "number": "9.4.2",
+            "title": "Compass-CI",
+            "page": 361
+          },
+          {
+            "number": "9.4.3",
+            "title": "EulerLauncher",
+            "page": 362
+          },
+          {
+            "number": "9.4.4",
+            "title": "A-Ops",
+            "page": 363
+          }
+        ]
+      },
+      {
+        "number": "9.5",
+        "title": "Industry Applications",
+        "page": 368,
+        "subsections": [
+          {
+            "number": "9.5.1",
+            "title": "Finance",
+            "page": 368
+          },
+          {
+            "number": "9.5.2",
+            "title": "Energy",
+            "page": 370
+          },
+          {
+            "number": "9.5.3",
+            "title": "Cloud Computing",
+            "page": 370
+          },
+          {
+            "number": "9.5.4",
+            "title": "Scientific Research",
+            "page": 371
+          }
+        ]
+      }
+    ]
+  }
+]
