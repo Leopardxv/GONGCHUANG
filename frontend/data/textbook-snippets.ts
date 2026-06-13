@@ -87,8 +87,7 @@ exit`,
     section: "3.2.4",
     title: "显示当前日期时间 (date)",
     description: "在终端中直接运行 date 命令，输出当前系统时间和日期。",
-    code: `[ict@openEuler24 ~]$ date
-Mon Jan  2 18:01:31 CST 2025`,
+    code: `date`,
     language: "bash",
   },
   {
@@ -97,7 +96,7 @@ Mon Jan  2 18:01:31 CST 2025`,
     section: "3.2.4",
     title: "命令行结构示例",
     description: "展示带有选项和参数的典型 Linux 命令行结构。",
-    code: `[ict@openEuler24 ~]$ ls -t --color /usr`,
+    code: `ls -t --color /usr`,
     language: "bash",
   },
   {
@@ -106,9 +105,8 @@ Mon Jan  2 18:01:31 CST 2025`,
     section: "3.2.4",
     title: "多行命令输入 (续行符 \\)",
     description: "使用反斜杠 \\ 将单条命令拆分成多行输入，提高可读性。",
-    code: `[ict@openEuler24 ~]$ file \\
-> /usr/share/grub/grub-mkconfig_lib
-/usr/share/grub/grub-mkconfig_lib: ASCII text`,
+    code: `file \\
+/usr/share/grub/grub-mkconfig_lib`,
     language: "bash",
   },
   {
@@ -117,10 +115,7 @@ Mon Jan  2 18:01:31 CST 2025`,
     section: "3.2.4",
     title: "获取命令的内建帮助信息 (--help)",
     description: "运行带 --help 选项的命令来输出详细的使用说明及可用参数列表。",
-    code: `[ict@openEuler24 ~]$ date --help
-Usage: date [OPTION]... [+FORMAT]
-  or:  date [-u|--utc|--universal] [MMDDhhmm[[CC]YY][.ss]]
-Display date and time in the given FORMAT.`,
+    code: `date --help`,
     language: "bash",
   },
   {
@@ -129,7 +124,7 @@ Display date and time in the given FORMAT.`,
     section: "3.2.5",
     title: "安装系统帮助文档包",
     description: "使用 dnf 包管理器安装核心工具和二进制工具的帮助手册。",
-    code: `[ict@openEuler24 ~]$ sudo dnf install -y coreutils-help binutils-help`,
+    code: `sudo dnf install -y coreutils-help binutils-help`,
     language: "bash",
   },
   {
@@ -138,7 +133,7 @@ Display date and time in the given FORMAT.`,
     section: "3.2.5",
     title: "动态查询并安装对应帮助包",
     description: "通过 rpm 查询命令所属包名并动态组合安装对应的 help 帮助包。",
-    code: `[ict@openEuler24 ~]$ sudo dnf install -y \`rpm -qf \\\`which dnf\\\` | sed 's/-[0-9].*//'\`-help`,
+    code: `sudo dnf install -y \`rpm -qf \\\`which dnf\\\` | sed 's/-[0-9].*//'\`-help`,
     language: "bash",
   },
   {
@@ -147,7 +142,7 @@ Display date and time in the given FORMAT.`,
     section: "3.2.5",
     title: "查询系统命令手册 (man)",
     description: "在系统联机帮助中获取 ls 命令的全部手册和参数说明（在其中按 q 退出）。",
-    code: `[ict@openEuler24 ~]$ man ls`,
+    code: `man ls`,
     language: "bash",
   },
   {
@@ -156,7 +151,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.1",
     title: "查看详尽目录列表 (Human-readable)",
     description: "使用人类易读格式（带 K/M/G 单位）输出根目录的文件和目录详细信息。",
-    code: `[ict@openEuler24 ~]$ ls -lh /`,
+    code: `ls -lh /`,
     language: "bash",
   },
   {
@@ -165,7 +160,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.1",
     title: "命令输出重定向至文本",
     description: "将 ls 的执行结果保存到文本文件 ls_output.txt 中，而非显示于屏幕。",
-    code: `[ict@openEuler24 ~]$ ls > ls_output.txt`,
+    code: `ls > ls_output.txt`,
     language: "bash",
   },
   {
@@ -175,12 +170,10 @@ Display date and time in the given FORMAT.`,
     title: "查看当前物理路径",
     description: "使用 pwd 和 pwd -P 分别查看当前符号路径和真实物理路径。",
     code: `# 查看逻辑路径
-[ict@openEuler24 bin]$ pwd
-/bin
+pwd
 
 # 查看解析软链接后的真实物理路径
-[ict@openEuler24 bin]$ pwd -P
-/usr/bin`,
+pwd -P`,
     language: "bash",
   },
   {
@@ -189,7 +182,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.1",
     title: "递归且可视创建多级子目录",
     description: "使用 mkdir 创建多层嵌套子目录，并开启打印创建细节与括号展开语法。",
-    code: `[ict@openEuler24 ~]$ mkdir -pv /tmp/foo/bar_{a,b}`,
+    code: `mkdir -pv /tmp/foo/bar_{a,b}`,
     language: "bash",
   },
   {
@@ -198,7 +191,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.1",
     title: "测量文件夹占用空间",
     description: "分析 /usr/src 目录下子文件的空间使用量，限制扫描深度为 1。",
-    code: `[ict@openEuler24 ~]$ du -hd1 /usr/src`,
+    code: `du -hd1 /usr/src`,
     language: "bash",
   },
   {
@@ -207,7 +200,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.1",
     title: "查看 bin 目录的软链接指向",
     description: "查看 /bin 目录的链接状态，表明其是 /usr/bin 的符号链接。",
-    code: `[ict@openEuler24 ~]$ ls -l /bin`,
+    code: `ls -l /bin`,
     language: "bash",
   },
   {
@@ -216,7 +209,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.2",
     title: "查看系统版本信息",
     description: "使用 cat 读取 openEuler 发行版配置文本的全部内容。",
-    code: `[ict@openEuler24 ~]$ cat /etc/os-release`,
+    code: `cat /etc/os-release`,
     language: "bash",
   },
   {
@@ -226,10 +219,10 @@ Display date and time in the given FORMAT.`,
     title: "配合 less 实现流控制翻页",
     description: "把大量的帮助或文件列表通过管道过滤给 less，防止滚屏过快。",
     code: `# 翻页阅读 ls 的帮助内容
-[ict@openEuler24 ~]$ ls --help | less
+ls --help | less
 
 # 翻页查看根目录列表
-[ict@openEuler24 ~]$ ls -lh / | less`,
+ls -lh / | less`,
     language: "bash",
   },
   {
@@ -238,7 +231,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.2",
     title: "查看文件末尾行内容",
     description: "使用 tail 截取 /etc/passwd 用户文件的最后 5 行。",
-    code: `[ict@openEuler24 ~]$ tail -n5 /etc/passwd`,
+    code: `tail -n5 /etc/passwd`,
     language: "bash",
   },
   {
@@ -247,7 +240,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.2",
     title: "剪切提取特定列数据",
     description: "以 ':' 为分隔符，裁切 /etc/passwd 提取用户名（第一列）和家目录路径（第六列）。",
-    code: `[ict@openEuler24 ~]$ cut -d: -f1,6 /etc/passwd`,
+    code: `cut -d: -f1,6 /etc/passwd`,
     language: "bash",
   },
   {
@@ -256,7 +249,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.2",
     title: "统计系统文件总个数",
     description: "列出 /bin 文件夹下所有项并用管道交给 wc -l 统计总行数。",
-    code: `[ict@openEuler24 ~]$ ls -A /bin/ | wc -l`,
+    code: `ls -A /bin/ | wc -l`,
     language: "bash",
   },
   {
@@ -265,7 +258,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.2",
     title: "显示带行号的文本",
     description: "利用 nl 命令为 /etc/os-release 文件加行号输出。",
-    code: `[ict@openEuler24 foo]$ nl /etc/os-release`,
+    code: `nl /etc/os-release`,
     language: "bash",
   },
   {
@@ -274,7 +267,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.2",
     title: "二进制十六进制查看文件",
     description: "使用 hexdump -C 查看文本文件的底层二进制及 ASCII 显示。",
-    code: `[ict@openEuler24 ~]$ hexdump -C /etc/passwd`,
+    code: `hexdump -C /etc/passwd`,
     language: "bash",
   },
   {
@@ -283,7 +276,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.2",
     title: "列出用户打开的文件",
     description: "使用 lsof 查看 ict 用户当前占用的所有进程与文件描述符。",
-    code: `[ict@openEuler24 ~]$ lsof -u ict`,
+    code: `lsof -u ict`,
     language: "bash",
   },
   {
@@ -292,7 +285,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.2",
     title: "查看可执行程序的文件类型",
     description: "使用 file 命令探测 /usr/bin/pwd 文件的详细架构（如 ELF 64 位）。",
-    code: `[ict@openEuler24 ~]$ file /usr/bin/pwd`,
+    code: `file /usr/bin/pwd`,
     language: "bash",
   },
   {
@@ -302,10 +295,10 @@ Display date and time in the given FORMAT.`,
     title: "安全复制与目录备份",
     description: "递归复制目录，同时保留权限、时间属性，并仅在源文件更新时进行覆盖更新。",
     code: `# 创建备份目录
-[ict@openEuler24 ~]$ mkdir ~/bak
+mkdir ~/bak
 
 # 复制 profile 文件夹
-[ict@openEuler24 ~]$ cp -pru .ssh/ /etc/profile.d/ bak`,
+cp -pru .ssh/ /etc/profile.d/ bak`,
     language: "bash",
   },
   {
@@ -324,10 +317,10 @@ Display date and time in the given FORMAT.`,
     title: "Tar 备份打包与解压归档",
     description: "使用 tar 对目录进行 gzip 压缩打包，并能够指定解压路径。",
     code: `# 备份打包 /etc 目录
-[ict@openEuler24 ~]$ tar -czvf etc.tar.gz /etc
+tar -czvf etc.tar.gz /etc
 
 # 解压 etc.tar.gz 到 /tmp 目录
-[ict@openEuler24 ~]$ tar -xzvf etc.tar.gz -C /tmp`,
+tar -xzvf etc.tar.gz -C /tmp`,
     language: "bash",
   },
   {
@@ -336,7 +329,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.4",
     title: "查询可执行命令物理路径",
     description: "使用 which 寻找命令行工具 pwd 和 tar 的可执行文件二进制物理存储路径。",
-    code: `[ict@openEuler24 ~]$ which pwd tar`,
+    code: `which pwd tar`,
     language: "bash",
   },
   {
@@ -345,7 +338,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.4",
     title: "基于数据库的文件快速查询",
     description: "利用 mlocate 快速从文件系统索引数据库里找出包含 pwd 名字的匹配路径。",
-    code: `[ict@openEuler24 ~]$ locate pwd`,
+    code: `locate pwd`,
     language: "bash",
   },
   {
@@ -354,7 +347,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.4",
     title: "查找命令、源码及手册页路径",
     description: "利用 whereis 定位 tar 命令的执行文件、man 手册文件位置，以及 stdio.h 头文件路径。",
-    code: `[ict@openEuler24 ~]$ whereis tar stdio.h`,
+    code: `whereis tar stdio.h`,
     language: "bash",
   },
   {
@@ -364,10 +357,10 @@ Display date and time in the given FORMAT.`,
     title: "find 高级条件搜索与删除",
     description: "使用 find 配合时间、文件类型、逻辑运算符及删除/命令执行动作的高级搜索命令。",
     code: `# 查找 24 小时内更新过的 .c 与 .h 文件并使用 tar 备份
-[ict@openEuler24 ~]$ find -mtime -1 \( -name "*.c" -or -name "*.h" \) -exec tar -rvf latest.tgz {} \;
+find -mtime -1 \( -name "*.c" -or -name "*.h" \) -exec tar -rvf latest.tgz {} \;
 
 # 查找 /var/log 目录下大于 10M 且比 ttt 旧的文件直接删除
-[ict@openEuler24 ~]$ find /var/log/ \! -newer ttt -size +10M -type f -delete`,
+find /var/log/ \! -newer ttt -size +10M -type f -delete`,
     language: "bash",
   },
   {
@@ -376,7 +369,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.4",
     title: "查找失效的软链接 (Broken links)",
     description: "在 /usr 目录前三层中，搜索并打印所有指向的物理文件已不存在的损坏软链接。",
-    code: `[ict@openEuler24 ~]$ find /usr -type l -maxdepth 3 -exec test ! -e {} \\; -print`,
+    code: `find /usr -type l -maxdepth 3 -exec test ! -e {} \\; -print`,
     language: "bash",
   },
   {
@@ -385,7 +378,7 @@ Display date and time in the given FORMAT.`,
     section: "3.3.5",
     title: "查询系统内核详细信息",
     description: "使用 uname -a 获取内核版本号、编译时间、操作系统版本与 CPU 架构。",
-    code: `[ict@openEuler24 ~]$ uname -a`,
+    code: `uname -a`,
     language: "bash",
   },
   {
@@ -395,10 +388,10 @@ Display date and time in the given FORMAT.`,
     title: "监控系统在线会话与登录历史",
     description: "使用 who 检查当前系统活跃会话，利用 last 查看账号最近的登录记录历史。",
     code: `# 查看当前在线用户会话
-[ict@openEuler24 ~]$ who -H
+who -H
 
 # 查看 root 用户的历史登录记录
-[ict@openEuler24 ~]$ last root`,
+last root`,
     language: "bash",
   },
   {
@@ -408,10 +401,10 @@ Display date and time in the given FORMAT.`,
     title: "磁盘分区与物理内存使用量体检",
     description: "df 查看文件系统的容量挂载占用，free -ht 展示内存与 Swap 交换区总量情况。",
     code: `# 查看根分区的磁盘使用状态
-[ict@openEuler24 bin]$ df -h /
+df -h /
 
 # 查看系统可用内存和交换空间总览
-[ict@openEuler24 ~]$ free -ht`,
+free -ht`,
     language: "bash",
   },
   {
@@ -437,10 +430,10 @@ timedatectl set-ntp yes`,
     title: "查看环境变量与 PATH 路径",
     description: "使用 env 命令输出系统环境变量，使用 echo 打印命令搜寻路径变量 PATH。",
     code: `# 查看所有系统环境变量
-[ict@openEuler24 ~]$ env | less
+env | less
 
 # 打印 PATH 命令路径
-[ict@openEuler24 ~]$ echo $PATH`,
+echo $PATH`,
     language: "bash",
   },
   {
@@ -449,8 +442,7 @@ timedatectl set-ntp yes`,
     section: "3.4.2",
     title: "查找命令类型 (type find)",
     description: "使用 type 查看 find 命令当前是被解析为内建命令、别名还是外部二进制文件路径。",
-    code: `[ict@openEuler24 ~]$ type find
-find is /home/ict/bin/find`,
+    code: `type find`,
     language: "bash",
   },
   {
@@ -460,13 +452,13 @@ find is /home/ict/bin/find`,
     title: "配置与导出环境变量",
     description: "使用 export 修改当前会话 PATH，并写入用户配置文件 .bashrc 永久生效。",
     code: `# 临时在当前会话 PATH 中追加新路径
-[ict@openEuler24 ~]$ export PATH=/home/ict/tools/bin:$PATH
+export PATH=/home/ict/tools/bin:$PATH
 
 # 将 PATH 的追加规则永久写入用户的 bash 配置文件中
-[ict@openEuler24 ~]$ echo "export PATH=/home/ict/tools/bin:\$PATH" >> ~/.bashrc
+echo "export PATH=/home/ict/tools/bin:\$PATH" >> ~/.bashrc
 
 # 让刚才修改的 .bashrc 配置文件立即生效
-[ict@openEuler24 ~]$ . ~/.bashrc`,
+. ~/.bashrc`,
     language: "bash",
   },
   {
@@ -475,7 +467,7 @@ find is /home/ict/bin/find`,
     section: "3.4.3",
     title: "通配符筛选目录",
     description: "利用通配符 * 匹配以 bin 结尾的系统目录。",
-    code: `[ict@openEuler24 ~]$ ls -dl /*bin`,
+    code: `ls -dl /*bin`,
     language: "bash",
   },
   {
@@ -485,10 +477,10 @@ find is /home/ict/bin/find`,
     title: "命令逻辑连条与反引号替换",
     description: "组合 && 条件执行链条，以及反引号 \` \` 的命令结果替换效果。",
     code: `# 生成临时文件名称并打印
-[ict@openEuler24 ~]$ tmpf=\`mktemp -u /tmp/tmp.XXXX\` && echo $tmpf
+tmpf=\`mktemp -u /tmp/tmp.XXXX\` && echo $tmpf
 
 # 逻辑与：当前一条命令成功时才运行下一条命令
-[ict@openEuler24 foo]$ pwd && mkdir /foo && pwd`,
+pwd && mkdir /foo && pwd`,
     language: "bash",
   },
   {
@@ -497,7 +489,7 @@ find is /home/ict/bin/find`,
     section: "3.4.4",
     title: "小括号子 Shell 隔离执行",
     description: "用小括号 () 包裹的命令会在独立的子进程中执行，退出后不改变当前主会话工作目录。",
-    code: `[ict@openEuler24 ~]$ (cd /tmp; pwd) && pwd`,
+    code: `(cd /tmp; pwd) && pwd`,
     language: "bash",
   },
   
@@ -509,8 +501,8 @@ find is /home/ict/bin/find`,
     title: "输出重定向基础",
     description: "使用 > 将命令输出写入文件，>> 追加内容，< 从文件读取输入。",
     code: `# 重定向标准输出与错误输出到不同位置
-[ict@openEuler24 ~]$ echo "Hello, openEuler!" > hello.txt 2> /dev/null
-[ict@openEuler22 ~]$ echo "Hello, openEuler!" &> hello.txt
+echo "Hello, openEuler!" > hello.txt 2> /dev/null
+echo "Hello, openEuler!" &> hello.txt
 
 # 查看文件内容
 cat hello.txt`,
@@ -523,10 +515,10 @@ cat hello.txt`,
     title: "输入重定向与输入输出组合",
     description: "使用 < 运算符将文件内容作为命令的输入，以及将输入/输出重定向组合使用。",
     code: `# 使用文件内容作为标准输入
-[ict@openEuler24 ~]$ wc < hello.txt
+wc < hello.txt
 
 # 组合：从 hello.txt 读取输入，将微调后的统计结果输出到 wc.txt
-[ict@openEuler24 ~]$ wc < hello.txt > wc.txt`,
+wc < hello.txt > wc.txt`,
     language: "bash",
   },
   {
@@ -535,9 +527,9 @@ cat hello.txt`,
     section: "3.4.5",
     title: "Here-Document 重定向输入",
     description: "使用 << EOF 将多行内容一次性追加重定向写入文本中。",
-    code: `[ict@openEuler24 ~]$ cat << EOF >> hello.txt
-> Hello, $(whoami)@$HOSTNAME
-> EOF`,
+    code: `cat << EOF >> hello.txt
+Hello, $(whoami)@$HOSTNAME
+EOF`,
     language: "bash",
   },
   {
@@ -547,7 +539,7 @@ cat hello.txt`,
     title: "管道组合命令与 Tee 双流分支",
     description: "使用管道 | 串联流，并配合 tee 截取中间过程写入日志。",
     code: `# 用 tee 截获中间排序结果并加上行号写入文件
-[ict@openEuler24 ~]$ cat /etc/passwd | sort | tee -a /tmp/passwd | nl > nlpasswd`,
+cat /etc/passwd | sort | tee -a /tmp/passwd | nl > nlpasswd`,
     language: "bash",
   },
   {
@@ -556,7 +548,7 @@ cat hello.txt`,
     section: "3.4.6",
     title: "Tar 与压缩管道数据流",
     description: "使用管道将打包输出的 tar 字节流直接重定向输入给压缩命令，避免写中间临时文件。",
-    code: `[ict@openEuler24 ~]$ tar -cvf bak.tar ~/bak | gzip > bak.tar.gz`,
+    code: `tar -cvf bak.tar ~/bak | gzip > bak.tar.gz`,
     language: "bash",
   },
   {
@@ -565,7 +557,7 @@ cat hello.txt`,
     section: "3.4.6",
     title: "Tar 与 xz 压缩管道数据流",
     description: "使用管道将打包输出的 tar 字节流直接重定向输入给 xz 压缩命令，避免写中间临时文件。",
-    code: `[ict@openEuler24 ~]$ tar -cvf bak.tar ~/bak | xz > bak.tar.xz`,
+    code: `tar -cvf bak.tar ~/bak | xz > bak.tar.xz`,
     language: "bash",
   },
   {
@@ -574,7 +566,7 @@ cat hello.txt`,
     section: "3.4.6",
     title: "结合 find 与 tar 打包文件",
     description: "通过管道将 find 查找到的文件列表传递给 tar 打包归档（使用 -T - 从标准输入读取列表）。",
-    code: `[ict@openEuler24 ~]$ find -type f -name "*.sh" | tar -cvf sh.tar -T -`,
+    code: `find -type f -name "*.sh" | tar -cvf sh.tar -T -`,
     language: "bash",
   },
   {
@@ -583,7 +575,7 @@ cat hello.txt`,
     section: "3.4.6",
     title: "结合 find 与 du 进行容量分析",
     description: "查找所有 C 语言源文件，并用 du 统计大小并按容量升序排列。",
-    code: `[ict@openEuler24 ~]$ find . -name "*.c" | du -ch | sort -k1 -n`,
+    code: `find . -name "*.c" | du -ch | sort -k1 -n`,
     language: "bash",
   },
   {
@@ -593,10 +585,10 @@ cat hello.txt`,
     title: "使用 xargs 构建参数执行",
     description: "通过 xargs 将搜寻出来的文件名称列表转化为具体参数，传给 wc 或 mv 命令执行。",
     code: `# 统计找到的所有代码文件行数总和
-[ict@openEuler24 ~]$ find -type f \(-name "*.c" -or -name "*.h" \) | xargs wc -l
+find -type f \(-name "*.c" -or -name "*.h" \) | xargs wc -l
 
 # 批量给 Shell 脚本增加 .bak 扩展名
-[ict@openEuler24 ~]$ find . -maxdepth 1 -type f -name '*.sh' | xargs -I % mv % %.bak`,
+find . -maxdepth 1 -type f -name '*.sh' | xargs -I % mv % %.bak`,
     language: "bash",
   },
   {
@@ -605,7 +597,7 @@ cat hello.txt`,
     section: "3.4.7",
     title: "区分 Shell 内置命令与外部程序",
     description: "使用 type 查看命令是内建命令（builtin）还是独立的可执行二进制程序，或者别名。",
-    code: `[ict@openEuler24 ~]$ type cd cat ls`,
+    code: `type cd cat ls`,
     language: "bash",
   },
   {
@@ -625,8 +617,7 @@ cat hello.txt`,
     section: "3.4.7",
     title: "载入并测试自定义函数",
     description: "使用 source 或 . 命令导入自定义的 rc 配置文件，然后用 type 查看函数是否生效。",
-    code: `[ict@openEuler24 ~]$ . ~/.install-help.rc && type install-help
-install-help is a function`,
+    code: `. ~/.install-help.rc && type install-help`,
     language: "bash",
   },
   /* ══════ Ch4: OS Principles and Practice ══════ */
