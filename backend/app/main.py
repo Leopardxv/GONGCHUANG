@@ -9,6 +9,7 @@ from app.events.ai_subscriber import register_ai_subscriber
 from app.modules.auth.router import router as auth_router
 from app.modules.ai.router import router as ai_router
 from app.modules.terminal.router import router as terminal_router
+from app.modules.task.router import router as task_router
 
 # Register AI subscriber eagerly (before first request)
 register_ai_subscriber()
@@ -16,6 +17,26 @@ register_ai_subscriber()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    # ── Database Initialization on Startup ──
+    from app.database import engine, async_session
+    from app.models.base import Base
+    
+    # Import all models to ensure SQLAlchemy metadata registers them
+    from app.modules.auth.model import User
+    from app.modules.terminal.model import DockerInstance, TerminalLog
+    from app.modules.ai.model import AIAnalysisLog
+    from app.modules.task.model import Task, Submission
+    from app.modules.task.seed import seed_tasks
+
+    print("Initializing database tables...")
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    print("Database tables initialized.")
+
+    # Seed mock data
+    async with async_session() as session:
+        await seed_tasks(session)
+        
     yield
 
 
@@ -36,6 +57,7 @@ app.add_middleware(
 
 app.include_router(auth_router, prefix=settings.API_V1_PREFIX)
 app.include_router(terminal_router, prefix=settings.API_V1_PREFIX + "/terminal")
+app.include_router(task_router, prefix=settings.API_V1_PREFIX)
 app.include_router(ai_router, prefix=settings.API_V1_PREFIX)
 
 

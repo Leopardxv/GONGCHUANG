@@ -12,6 +12,7 @@ import type { UserStats } from "@/types/user";
 import { textbookExercises } from "@/data/exercises";
 import AuthScene from "@/components/AuthScene";
 import ICTLogo from "@/components/ICTLogo";
+import { taskService, type Task } from "@/services/task.service";
 
 /* ── Mini ICT badge for sidebar ── */
 function MiniBadge() {
@@ -786,6 +787,47 @@ function StudentWorkspace({
     },
   ];
 
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitTask, setSubmitTask] = useState<Task | null>(null);
+  const [submitContent, setSubmitContent] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  async function fetchTasks() {
+    try {
+      const data = await taskService.getTasks();
+      setTasks(data);
+    } catch (err) {
+      console.error("[Student tasks] Fetch failed:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  function handleOpenSubmitModal(task: Task) {
+    setSubmitTask(task);
+    setSubmitContent(task.submission?.content || "");
+  }
+
+  async function handleSubmitTask() {
+    if (!submitTask) return;
+    setSubmitting(true);
+    try {
+      await taskService.submitTask(submitTask.id, submitContent);
+      await fetchTasks();
+      setSubmitTask(null);
+      setSubmitContent("");
+    } catch (err) {
+      console.error("[Student tasks] Submit failed:", err);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <div className="flex flex-1 overflow-y-auto px-8 py-10">
       <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 lg:grid-cols-12">
@@ -914,7 +956,128 @@ function StudentWorkspace({
             </ol>
           </div>
         </aside>
+
+        {/* ── Teacher tasks section ── */}
+        <section className="surface rounded-[30px] p-6 lg:col-span-8">
+          <div className="mb-5 flex items-end justify-between gap-5">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">教师任务</p>
+              <h2 className="mt-2 text-2xl font-semibold text-[var(--color-text)]">教师发布的学习与实训作业</h2>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--color-muted)]">
+                查看教师部署的任务要求，进入终端进行调试，并在右侧进行提交。
+              </p>
+            </div>
+          </div>
+          {loading ? (
+            <p className="text-sm text-[var(--color-muted)]">加载任务列表中...</p>
+          ) : tasks.length === 0 ? (
+            <p className="text-sm text-[var(--color-muted)]">当前暂无教师部署的任务</p>
+          ) : (
+            <div className="space-y-4">
+              {tasks.map((task) => (
+                <div
+                  key={task.id}
+                  className="surface-soft rounded-[22px] p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border border-[var(--color-border)]"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <h3 className="text-base font-semibold text-[var(--color-text)] truncate">{task.title}</h3>
+                      <span
+                        className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                          task.submission?.score !== null
+                            ? "bg-[color-mix(in_srgb,var(--color-tint)_15%,transparent)] text-[var(--color-tint)] border border-[var(--color-tint-border)]"
+                            : task.submission
+                              ? "bg-[var(--color-panel-strong)] text-[var(--color-muted)] border border-[var(--color-border)]"
+                              : "bg-[color-mix(in_srgb,var(--color-warm)_15%,transparent)] text-[var(--color-warm)] border border-[color-mix(in_srgb,var(--color-warm)_30%,var(--color-border))]"
+                        }`}
+                      >
+                        {task.submission?.score !== null
+                          ? `已批改: ${task.submission?.score}分`
+                          : task.submission
+                            ? "待批改"
+                            : "未提交"}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm text-[var(--color-muted)] whitespace-pre-wrap leading-relaxed">{task.description}</p>
+                    <p className="mt-3 text-[11px] text-[var(--color-muted)]">截止日期: {task.deadline}</p>
+                    
+                    {task.submission?.comment && (
+                      <div className="mt-3 text-xs bg-[var(--color-panel-strong)] p-3 rounded-lg border border-[var(--color-border)]">
+                        <span className="font-semibold text-[var(--color-tint)]">教师评语: </span>
+                        <span className="text-[var(--color-text)] leading-relaxed">{task.submission?.comment}</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex shrink-0 items-center gap-2.5">
+                    <Link
+                      href="/playground"
+                      className="rounded-full border border-[var(--color-border-strong)] bg-transparent px-4 py-2 text-xs font-medium text-[var(--color-text)] hover:bg-[var(--color-hover)]"
+                    >
+                      去 Playground 实验
+                    </Link>
+                    <button
+                      onClick={() => handleOpenSubmitModal(task)}
+                      className="rounded-full bg-[var(--color-tint)] px-4 py-2 text-xs font-medium text-white hover:opacity-90 transition-opacity"
+                    >
+                      {task.submission ? "修改提交" : "提交作业"}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <aside className="lg:col-span-4" />
       </div>
+
+      {/* Submission Modal */}
+      {submitTask && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+          onClick={() => setSubmitTask(null)}
+        >
+          <div
+            className="w-[500px] border border-[var(--color-border)] bg-[var(--color-bg)] p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="mb-1 text-sm font-bold text-[var(--color-text)]">提交作业: {submitTask.title}</h3>
+            <p className="mb-4 text-xs text-[var(--color-muted)] whitespace-pre-wrap">{submitTask.description}</p>
+            <div className="space-y-4">
+              <div>
+                <label className="mb-1 block text-xs text-[var(--color-muted)]">
+                  作业内容 (可粘贴您的 Shell 脚本或实验报告)
+                </label>
+                <textarea
+                  className="w-full border border-[var(--color-border)] bg-[var(--color-bg)] p-3 font-mono text-sm text-[var(--color-text)] outline-none resize-none"
+                  style={{ caretColor: "var(--color-accent)" }}
+                  rows={8}
+                  value={submitContent}
+                  onChange={(e) => setSubmitContent(e.target.value)}
+                  placeholder="#!/bin/bash\n# 在这里键入您的脚本或报告内容..."
+                />
+              </div>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setSubmitTask(null)}
+                  disabled={submitting}
+                  className="border border-[var(--color-border)] px-4 py-2 text-sm text-[var(--color-muted)]"
+                >
+                  取消
+                </button>
+                <button
+                  onClick={handleSubmitTask}
+                  disabled={submitting}
+                  className="bg-[var(--color-tint)] px-4 py-2 text-sm text-white hover:opacity-90 disabled:opacity-50"
+                >
+                  {submitting ? "提交中..." : "确认提交"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
