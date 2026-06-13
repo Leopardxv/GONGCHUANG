@@ -226,7 +226,6 @@ export default function TasksGrading() {
                         : "text-[var(--color-muted)] hover:bg-[var(--color-panel-strong)] hover:text-[var(--color-text)]"
                     }`}
                   >
-                    <span className="block truncate">{s.studentId === s.studentName ? "" : s.studentId}</span>
                     <span className="block truncate font-medium text-[var(--color-text)]">{s.studentName}</span>
                   </button>
                 ))}
