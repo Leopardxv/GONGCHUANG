@@ -27,11 +27,27 @@ export default function TasksGrading() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [activeSubmissionIdx, setActiveSubmissionIdx] = useState(0);
+  // Helper to get date 7 days from now in YYYY-MM-DD format
+  const getDefaultDeadline = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 7);
+    return d.toISOString().split("T")[0];
+  };
+
   const [showNewTask, setShowNewTask] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDesc, setNewTaskDesc] = useState("");
-  const [newTaskDeadline, setNewTaskDeadline] = useState("");
+  const [newTaskDeadline, setNewTaskDeadline] = useState(getDefaultDeadline());
   const [loading, setLoading] = useState(true);
+
+  // Reset deadline and fields when showNewTask changes
+  useEffect(() => {
+    if (showNewTask) {
+      setNewTaskDeadline(getDefaultDeadline());
+      setNewTaskTitle("");
+      setNewTaskDesc("");
+    }
+  }, [showNewTask]);
 
   // Controlled inputs for grading
   const [score, setScore] = useState<string>("");
@@ -89,16 +105,30 @@ export default function TasksGrading() {
   }, [selectedTaskId, activeSubmissionIdx, submission]);
 
   async function handleCreateTask() {
-    if (!newTaskTitle || !newTaskDesc || !newTaskDeadline) return;
+    const trimmedTitle = newTaskTitle.trim();
+    const trimmedDesc = newTaskDesc.trim();
+    
+    if (!trimmedTitle || !trimmedDesc || !newTaskDeadline) {
+      alert("请填写完整的任务名称、作业要求，并选择截止时间！");
+      return;
+    }
+    
     try {
-      await taskService.createTask(newTaskTitle, newTaskDesc, newTaskDeadline);
+      const created = await taskService.createTask(trimmedTitle, trimmedDesc, newTaskDeadline);
+      
+      // Select the newly created task
+      if (created && created.id) {
+        setSelectedTaskId(created.id);
+        setActiveSubmissionIdx(0);
+      }
+      
       await fetchTasks();
       setShowNewTask(false);
       setNewTaskTitle("");
       setNewTaskDesc("");
-      setNewTaskDeadline("");
     } catch (err) {
       console.error("[Tasks] Create failed:", err);
+      alert("发布任务失败，请检查您的网络连接或登录状态！");
     }
   }
 
