@@ -8,7 +8,12 @@ import "@xterm/xterm/css/xterm.css";
 import { useTerminal } from "@/hooks/useTerminal";
 import { useTerminalStore } from "@/stores/terminalStore";
 
-export default function TerminalPanel() {
+interface TerminalPanelProps {
+  onCommand?: (command: string) => void;
+  variant?: "default" | "vscode";
+}
+
+export default function TerminalPanel({ onCommand, variant = "default" }: TerminalPanelProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const termRef = useRef<Terminal | null>(null);
   const fitRef = useRef<FitAddon | null>(null);
@@ -16,10 +21,11 @@ export default function TerminalPanel() {
   const status = useTerminalStore((s) => s.status);
 
   const onOutput = useCallback((data: string) => {
-    if (readyRef.current) termRef.current?.write(data);
+    termRef.current?.write(data);
   }, []);
 
   const onSessionReady = useCallback(() => {
+    readyRef.current = true;
     fitRef.current?.fit();
   }, []);
 
@@ -36,6 +42,21 @@ export default function TerminalPanel() {
       setTimeout(() => {
         readyRef.current = true;
         sendInput("\x0c");
+
+        // Check for auto-execute command from URL query parameter
+        if (typeof window !== "undefined") {
+          const params = new URLSearchParams(window.location.search);
+          const cmdToRun = params.get("command");
+          if (cmdToRun) {
+            setTimeout(() => {
+              window.dispatchEvent(new CustomEvent("terminal-paste", { detail: cmdToRun }));
+              // Clean up the command parameter from the URL to prevent re-execution on refresh
+              const search = window.location.search.replace(/[?&]command=[^&]+/, "").replace(/^&/, "?");
+              const cleanUrl = window.location.pathname + search;
+              window.history.replaceState(null, "", cleanUrl);
+            }, 600);
+          }
+        }
       }, 400);
     }
   }, [status, sendInput]);
@@ -46,25 +67,25 @@ export default function TerminalPanel() {
 
     const term = new Terminal({
       theme: {
-        background: "#161b22",
-        foreground: "#c9d1d9",
-        cursor: "#58a6ff",
-        black: "#21262d",
+        background: "#1e1e1e",
+        foreground: "#cccccc",
+        cursor: "#f0aaa4",
+        black: "#252526",
         red: "#f85149",
-        green: "#3fb950",
-        yellow: "#d2991d",
-        blue: "#58a6ff",
-        magenta: "#bc8cff",
-        cyan: "#39d2c0",
-        white: "#c9d1d9",
-        brightBlack: "#30363d",
+        green: "#8a8a8a",
+        yellow: "#8a8a8a",
+        blue: "#c7c7c7",
+        magenta: "#c7342f",
+        cyan: "#9da7ad",
+        white: "#cccccc",
+        brightBlack: "#3c3c3c",
         brightRed: "#ff7b72",
-        brightGreen: "#56d364",
-        brightYellow: "#e3b341",
-        brightBlue: "#79c0ff",
-        brightMagenta: "#d2a8ff",
-        brightCyan: "#56d4dd",
-        brightWhite: "#f0f6fc",
+        brightGreen: "#b7b7b7",
+        brightYellow: "#b7b7b7",
+        brightBlue: "#eeeeee",
+        brightMagenta: "#f0aaa4",
+        brightCyan: "#c5cdd2",
+        brightWhite: "#f5f5f5",
       },
       fontSize: 14,
       fontFamily: "'JetBrains Mono', 'Consolas', 'Menlo', monospace",
@@ -90,7 +111,10 @@ export default function TerminalPanel() {
       sendInput(data);
       if (data === "\r") {
         const cmd = line.trim();
-        if (cmd) sendCommand(cmd);
+        if (cmd) {
+          onCommand?.(cmd);
+          sendCommand(cmd);
+        }
         line = "";
       } else if (data === "\x7f" || data === "\b") {
         line = line.slice(0, -1);
@@ -127,21 +151,70 @@ export default function TerminalPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Paste handler — listen for custom event from playground or textbook
+  useEffect(() => {
+    const handler = (e: CustomEvent<string>) => {
+      if (!readyRef.current || !termRef.current) return;
+      const cmd = e.detail;
+
+      // Send raw input to terminal process with carriage returns to execute it
+      const formattedCmd = cmd.replace(/\r?\n/g, "\r") + "\r";
+      sendInput(formattedCmd);
+
+      // Also register the command with the AI assistant / database logger and progress tracker
+      const lines = cmd.split(/\r?\n/);
+      lines.forEach((line) => {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith("#")) {
+          onCommand?.(trimmed);
+          sendCommand(trimmed);
+        }
+      });
+    };
+    window.addEventListener("terminal-paste", handler as EventListener);
+    return () => window.removeEventListener("terminal-paste", handler as EventListener);
+  }, [onCommand, sendCommand, sendInput]);
+
+  const isVSCode = variant === "vscode";
+
   return (
-    <div className="flex h-full flex-col rounded-lg border border-[#21262d] bg-[#161b22] overflow-hidden">
-      <div className="flex shrink-0 items-center justify-between border-b border-[#21262d] bg-[#0d1117] px-4 py-2">
-        <div className="flex items-center gap-2.5">
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#f85149]" />
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#d2991d]" />
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#3fb950]" />
-          <span className="ml-2 text-[11px] font-medium text-[#8b949e]">openEuler Terminal</span>
-        </div>
+    <div
+      className={`flex h-full flex-col overflow-hidden ${
+        isVSCode
+          ? "border border-[#2d2d2d] bg-[#1e1e1e]"
+          : "rounded-lg border border-[#2d2d2d] bg-[#1e1e1e]"
+      }`}
+    >
+      <div
+        className={`flex shrink-0 items-center justify-between border-b px-4 py-2 ${
+          isVSCode ? "border-[#2d2d2d] bg-[#252526]" : "border-[#2d2d2d] bg-[#181818]"
+        }`}
+      >
+        {isVSCode ? (
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="border-b border-[#c7342f] pb-1 font-mono text-[11px] font-semibold uppercase tracking-wide text-[#cccccc]">
+              Terminal
+            </span>
+            <span className="truncate text-[11px] text-[#8a8a8a]">openEuler · bash</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2.5">
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#f85149]" />
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#4a4a4a]" />
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#8b949e]" />
+            <span className="ml-2 text-[11px] font-medium text-[#8b949e]">openEuler Terminal</span>
+          </div>
+        )}
         <div className="flex items-center gap-1.5 text-[11px]">
-          <span className={`inline-block h-2 w-2 rounded-full ${status === "connected" ? "bg-[#3fb950]" : status === "connecting" ? "bg-[#d2991d]" : "bg-[#f85149]"}`} />
-          <span className="text-[#8b949e]">{status}</span>
+          <span
+            className={`inline-block h-2 w-2 rounded-full ${
+              status === "connected" ? "bg-[#c7c7c7]" : status === "connecting" ? "bg-[#8a8a8a]" : "bg-[#f85149]"
+            }`}
+          />
+          <span className={isVSCode ? "text-[#8a8a8a]" : "text-[#8b949e]"}>{status}</span>
         </div>
       </div>
-      <div ref={containerRef} className="flex-1 bg-[#161b22]" />
+      <div ref={containerRef} className="flex-1 bg-[#1e1e1e]" />
     </div>
   );
 }

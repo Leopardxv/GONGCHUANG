@@ -4,24 +4,31 @@ import { useEffect } from "react";
 import { useAuthStore } from "@/stores/authStore";
 import { authService } from "@/services/auth.service";
 
-let initialized = false;
-
 export function useAuth() {
-  const { isAuthenticated, isLoading, setUser } = useAuthStore();
+  const { isAuthenticated, isLoading, setUser, setLoading } = useAuthStore();
 
   useEffect(() => {
-    if (initialized || isAuthenticated) return;
-    initialized = true;
+    if (isAuthenticated) {
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
 
     (async () => {
+      setLoading(true);
       try {
         const user = await authService.getMe();
-        setUser(user);
+        if (!cancelled) setUser(user);
       } catch {
-        setUser(null);
+        if (!cancelled) setUser(null);
       }
     })();
-  }, [isAuthenticated, setUser]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated, setLoading, setUser]);
 
   return { isLoading };
 }

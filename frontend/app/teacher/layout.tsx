@@ -22,8 +22,8 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#121212]">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#2D2D2D] border-t-[#00FF66]" />
+      <div className="flex min-h-screen items-center justify-center bg-[var(--color-bg)]">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-accent)]" />
       </div>
     );
   }
@@ -37,7 +37,7 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#121212]">
+    <div className="flex h-screen overflow-hidden bg-[var(--color-bg)]">
       <TeacherSidebar
         username={user.username}
         onLogout={handleLogout}

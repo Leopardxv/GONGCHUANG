@@ -76,11 +76,28 @@ async def terminal_connect(ws: WebSocket):
     # Use a queue to transfer data from the Docker reader thread to the asyncio task
     output_queue: asyncio.Queue = asyncio.Queue()
 
+    # Check if Windows Named Pipe is used to avoid blocking reads locking the handle
+    is_npipe = False
+    handle = getattr(sock, "_handle", None)
+    if handle is not None:
+        try:
+            import win32pipe
+            is_npipe = True
+        except ImportError:
+            pass
+
     def docker_reader() -> None:
         """Runs in a thread. Reads from Docker socket and pushes to queue."""
+        read_fn = getattr(sock, "read", None) or sock.recv
         while running:
             try:
-                data = sock.read(BUFFER_SIZE)
+                if is_npipe:
+                    _, avail, _ = win32pipe.PeekNamedPipe(handle, 0)
+                    if avail == 0:
+                        time.sleep(0.02)
+                        continue
+
+                data = read_fn(BUFFER_SIZE)
                 if data is None or (isinstance(data, bytes) and len(data) == 0):
                     break
                 if isinstance(data, bytes):
@@ -119,8 +136,10 @@ async def terminal_connect(ws: WebSocket):
 
             if msg_type == "input":
                 data = msg.get("data", "")
-                # SocketIO is read-only; use underlying _sock for writes
-                await loop.run_in_executor(io_pool, sock._sock.send, data.encode("utf-8"))
+                # SocketIO is read-only; use underlying _sock for writes.
+                # On Windows (named pipes), _sock may not exist — use the socket directly.
+                write_sock = getattr(sock, "_sock", sock)
+                await loop.run_in_executor(io_pool, write_sock.send, data.encode("utf-8"))
 
             elif msg_type == "resize":
                 try:

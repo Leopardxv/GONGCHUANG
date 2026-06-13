@@ -57,11 +57,11 @@ export default function StudentsMonitor() {
     <div className="p-6">
       {/* Toolbar */}
       <div className="mb-4 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2 border border-[#2D2D2D] bg-[#121212] px-3 py-2">
-          <span className="text-[#8E918F]">{iconSearch}</span>
+        <div className="flex items-center gap-2 border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2">
+          <span className="text-[var(--color-muted)]">{iconSearch}</span>
           <input
-            className="w-56 bg-transparent text-sm text-[#FFFFFF] outline-none placeholder:text-[#8E918F]"
-            style={{ caretColor: "#00FF66" }}
+            className="w-56 bg-transparent text-sm text-[var(--color-text)] outline-none placeholder:text-[var(--color-muted)]"
+            style={{ caretColor: "var(--color-accent)" }}
             placeholder="输入姓名或学号..."
             value={search}
             onChange={(e) => {
@@ -74,7 +74,7 @@ export default function StudentsMonitor() {
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value as "hours" | "progress")}
-          className="border border-[#2D2D2D] bg-[#121212] px-3 py-2 text-sm text-[#FFFFFF] outline-none"
+          className="border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm text-[var(--color-text)] outline-none"
         >
           <option value="hours">按学时从高到低</option>
           <option value="progress">按通关从高到低</option>
@@ -82,36 +82,36 @@ export default function StudentsMonitor() {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-[4px] border border-[#2D2D2D]">
+      <div className="overflow-hidden rounded-[4px] border border-[var(--color-border)]">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-[#2D2D2D] bg-[#1A1A1A]">
-              <th className="px-5 py-3 text-left text-xs font-normal text-[#8E918F]">学号</th>
-              <th className="px-5 py-3 text-left text-xs font-normal text-[#8E918F]">姓名</th>
-              <th className="px-5 py-3 text-left text-xs font-normal text-[#8E918F]">累计学时</th>
-              <th className="px-5 py-3 text-left text-xs font-normal text-[#8E918F]">当前教材进度</th>
-              <th className="px-5 py-3 text-left text-xs font-normal text-[#8E918F]">Playground 通关</th>
+            <tr className="border-b border-[var(--color-border)] bg-[var(--color-panel-strong)]">
+              <th className="px-5 py-3 text-left text-xs font-normal text-[var(--color-muted)]">学号</th>
+              <th className="px-5 py-3 text-left text-xs font-normal text-[var(--color-muted)]">姓名</th>
+              <th className="px-5 py-3 text-left text-xs font-normal text-[var(--color-muted)]">累计学时</th>
+              <th className="px-5 py-3 text-left text-xs font-normal text-[var(--color-muted)]">当前教材进度</th>
+              <th className="px-5 py-3 text-left text-xs font-normal text-[var(--color-muted)]">Playground 通关</th>
             </tr>
           </thead>
           <tbody>
             {paged.map((s) => (
               <tr
                 key={s.id}
-                className="h-12 border-b border-[#2D2D2D] transition-none hover:bg-[#222222]"
+                className="h-12 border-b border-[var(--color-border)] transition-none hover:bg-[var(--color-hover)]"
                 style={{ fontFamily: "'JetBrains Mono', monospace" }}
               >
-                <td className="px-5 text-sm text-[#FFFFFF]">{s.id}</td>
+                <td className="px-5 text-sm text-[var(--color-text)]">{s.id}</td>
                 <td className="px-5 text-sm">
                   <button
                     onClick={() => setSelected(s)}
-                    className="text-[#FFFFFF] transition-none hover:text-[#00FF66]"
+                    className="text-[var(--color-text)] transition-none hover:text-[var(--color-accent)]"
                   >
                     {s.name}
                   </button>
                 </td>
-                <td className="px-5 text-sm text-[#FFFFFF]">{s.hours} 小时</td>
-                <td className="px-5 text-sm text-[#FFFFFF]">{s.chapter}</td>
-                <td className="px-5 text-sm text-[#FFFFFF]">
+                <td className="px-5 text-sm text-[var(--color-text)]">{s.hours} 小时</td>
+                <td className="px-5 text-sm text-[var(--color-text)]">{s.chapter}</td>
+                <td className="px-5 text-sm text-[var(--color-text)]">
                   {s.playgroundPassed} / {s.playgroundTotal} 关
                 </td>
               </tr>
@@ -125,17 +125,17 @@ export default function StudentsMonitor() {
         <button
           onClick={() => setPage((p) => Math.max(1, p - 1))}
           disabled={page === 1}
-          className="text-[#8E918F] disabled:opacity-30 hover:text-[#FFFFFF]"
+          className="text-[var(--color-muted)] disabled:opacity-30 hover:text-[var(--color-text)]"
         >
           {"< Prev"}
         </button>
-        <span className="text-[#8E918F]">
+        <span className="text-[var(--color-muted)]">
           {page} / {totalPages}
         </span>
         <button
           onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
           disabled={page === totalPages}
-          className="text-[#8E918F] disabled:opacity-30 hover:text-[#FFFFFF]"
+          className="text-[var(--color-muted)] disabled:opacity-30 hover:text-[var(--color-text)]"
         >
           {"Next >"}
         </button>
@@ -148,16 +148,16 @@ export default function StudentsMonitor() {
           onClick={() => setSelected(null)}
         >
           <div
-            className="w-[500px] border border-[#2D2D2D] bg-[#121212] p-6"
+            className="w-[500px] border border-[var(--color-border)] bg-[var(--color-bg)] p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-sm font-bold text-[#FFFFFF]">
+              <h3 className="text-sm font-bold text-[var(--color-text)]">
                 {selected.name} · {selected.id}
               </h3>
               <button
                 onClick={() => setSelected(null)}
-                className="text-[#8E918F] hover:text-[#FFFFFF]"
+                className="text-[var(--color-muted)] hover:text-[var(--color-text)]"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
@@ -166,20 +166,20 @@ export default function StudentsMonitor() {
             </div>
 
             <div className="mb-4 flex gap-6 text-xs">
-              <span className="text-[#8E918F]">
-                累计学时: <span className="text-[#FFFFFF]">{selected.hours}h</span>
+              <span className="text-[var(--color-muted)]">
+                累计学时: <span className="text-[var(--color-text)]">{selected.hours}h</span>
               </span>
-              <span className="text-[#8E918F]">
-                进度: <span className="text-[#FFFFFF]">{selected.chapter}</span>
+              <span className="text-[var(--color-muted)]">
+                进度: <span className="text-[var(--color-text)]">{selected.chapter}</span>
               </span>
-              <span className="text-[#8E918F]">
-                通关: <span className="text-[#00FF66]">{selected.playgroundPassed}/{selected.playgroundTotal}</span>
+              <span className="text-[var(--color-muted)]">
+                通关: <span className="text-[var(--color-accent)]">{selected.playgroundPassed}/{selected.playgroundTotal}</span>
               </span>
             </div>
 
-            <div className="max-h-60 overflow-y-auto space-y-2 border-t border-[#2D2D2D] pt-4">
+            <div className="max-h-60 overflow-y-auto space-y-2 border-t border-[var(--color-border)] pt-4">
               {selected.logs.map((log, i) => (
-                <p key={i} className="text-xs text-[#8E918F] font-mono">{log}</p>
+                <p key={i} className="text-xs text-[var(--color-muted)] font-mono">{log}</p>
               ))}
             </div>
           </div>

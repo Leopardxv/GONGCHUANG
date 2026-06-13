@@ -75,10 +75,10 @@ export default function TasksGrading() {
   return (
     <div className="flex h-[calc(100vh-0px)]">
       {/* ── Left panel: task list (30%) ── */}
-      <div className="w-[30%] shrink-0 border-r border-[#2D2D2D] bg-[#121212] p-4">
+      <div className="w-[30%] shrink-0 border-r border-[var(--color-border)] bg-[var(--color-bg)] p-4">
         <button
           onClick={() => setShowNewTask(true)}
-          className="mb-4 w-full border border-[#00FF66] bg-[#121212] px-4 py-2.5 text-sm text-[#00FF66] transition-none hover:bg-[#00FF66] hover:text-[#121212]"
+          className="mb-4 w-full border border-[var(--color-accent)] bg-[var(--color-bg)] px-4 py-2.5 text-sm text-[var(--color-accent)] transition-none hover:bg-[var(--color-accent)] hover:text-[var(--color-accent-contrast)]"
         >
           + 新建任务
         </button>
@@ -93,12 +93,12 @@ export default function TasksGrading() {
               }}
               className={`relative w-full px-4 py-3 text-left text-sm ${
                 selectedTaskId === t.id
-                  ? "border-l-[3px] border-l-[#00FF66] bg-[#1A1A1A] text-[#FFFFFF]"
-                  : "text-[#8E918F] hover:bg-[#1A1A1A] hover:text-[#FFFFFF]"
+                  ? "border-l-[3px] border-l-[var(--color-accent)] bg-[var(--color-panel-strong)] text-[var(--color-text)]"
+                  : "text-[var(--color-muted)] hover:bg-[var(--color-panel-strong)] hover:text-[var(--color-text)]"
               }`}
             >
               <p className="truncate">{t.title}</p>
-              <p className="mt-0.5 text-[11px] text-[#8E918F]">
+              <p className="mt-0.5 text-[11px] text-[var(--color-muted)]">
                 截止: {t.deadline}
               </p>
             </button>
@@ -107,30 +107,30 @@ export default function TasksGrading() {
       </div>
 
       {/* ── Right panel: grading workbench (70%) ── */}
-      <div className="flex w-[70%] flex-col bg-[#121212]">
+      <div className="flex w-[70%] flex-col bg-[var(--color-bg)]">
         {selectedTask && submission ? (
           <>
             {/* Task meta */}
-            <div className="shrink-0 border-b border-[#2D2D2D] px-5 py-3">
-              <h2 className="text-sm font-bold text-[#FFFFFF]">
+            <div className="shrink-0 border-b border-[var(--color-border)] px-5 py-3">
+              <h2 className="text-sm font-bold text-[var(--color-text)]">
                 {selectedTask.title}
               </h2>
-              <p className="mt-1 text-xs text-[#8E918F]">
+              <p className="mt-1 text-xs text-[var(--color-muted)]">
                 已批改: {selectedTask.gradedCount} / {selectedTask.totalCount}
               </p>
             </div>
 
             <div className="flex flex-1 overflow-hidden">
               {/* Student roster sidebar */}
-              <div className="w-[140px] shrink-0 overflow-y-auto border-r border-[#2D2D2D] bg-[#121212]">
+              <div className="w-[140px] shrink-0 overflow-y-auto border-r border-[var(--color-border)] bg-[var(--color-bg)]">
                 {selectedTask.submissions.map((s, i) => (
                   <button
                     key={s.studentId}
                     onClick={() => setActiveSubmissionIdx(i)}
                     className={`w-full px-3 py-2 text-left text-xs ${
                       i === activeSubmissionIdx
-                        ? "bg-[#1A1A1A] text-[#00FF66]"
-                        : "text-[#8E918F] hover:bg-[#1A1A1A] hover:text-[#FFFFFF]"
+                        ? "bg-[var(--color-panel-strong)] text-[var(--color-accent)]"
+                        : "text-[var(--color-muted)] hover:bg-[var(--color-panel-strong)] hover:text-[var(--color-text)]"
                     }`}
                   >
                     <span className="block truncate">{s.studentId}</span>
@@ -142,8 +142,8 @@ export default function TasksGrading() {
               {/* Code viewer + grading */}
               <div className="flex flex-1 flex-col overflow-hidden p-5">
                 {/* Code viewer */}
-                <div className="mb-4 h-[400px] shrink-0 overflow-y-auto rounded-[4px] border border-[#2D2D2D] bg-[#050505] p-4">
-                  <pre className="font-mono text-sm text-[#00FF66] whitespace-pre-wrap leading-relaxed">
+                <div className="mb-4 h-[400px] shrink-0 overflow-y-auto rounded-[4px] border border-[var(--color-border)] bg-[var(--color-code-bg)] p-4">
+                  <pre className="font-mono text-sm text-[var(--color-accent)] whitespace-pre-wrap leading-relaxed">
                     {submission.content}
                   </pre>
                 </div>
@@ -151,34 +151,34 @@ export default function TasksGrading() {
                 {/* Grading bar */}
                 <div className="flex items-end gap-4">
                   <div className="flex flex-col gap-1">
-                    <label className="text-[11px] text-[#8E918F]">得分</label>
-                    <div className="flex items-center gap-1 border border-[#2D2D2D] bg-[#121212] px-2 py-1.5">
+                    <label className="text-[11px] text-[var(--color-muted)]">得分</label>
+                    <div className="flex items-center gap-1 border border-[var(--color-border)] bg-[var(--color-bg)] px-2 py-1.5">
                       <input
                         ref={scoreInputRef}
                         type="number"
                         min={0}
                         max={100}
                         defaultValue={submission.score ?? ""}
-                        className="w-14 bg-transparent text-sm text-[#FFFFFF] outline-none"
-                        style={{ caretColor: "#00FF66" }}
+                        className="w-14 bg-transparent text-sm text-[var(--color-text)] outline-none"
+                        style={{ caretColor: "var(--color-accent)" }}
                       />
-                      <span className="text-xs text-[#8E918F]">/ 100 分</span>
+                      <span className="text-xs text-[var(--color-muted)]">/ 100 分</span>
                     </div>
                   </div>
 
                   <div className="flex flex-1 flex-col gap-1">
-                    <label className="text-[11px] text-[#8E918F]">评语</label>
+                    <label className="text-[11px] text-[var(--color-muted)]">评语</label>
                     <input
                       defaultValue={submission.comment}
                       placeholder="键入教师评语..."
-                      className="border border-[#2D2D2D] bg-[#121212] px-3 py-1.5 text-sm text-[#FFFFFF] outline-none placeholder:text-[#8E918F]"
-                      style={{ caretColor: "#00FF66" }}
+                      className="border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] outline-none placeholder:text-[var(--color-muted)]"
+                      style={{ caretColor: "var(--color-accent)" }}
                     />
                   </div>
 
                   <button
                     onClick={handleSaveGrade}
-                    className="shrink-0 bg-[#00FF66] px-5 py-2 text-sm font-medium text-[#121212] transition-none hover:opacity-90"
+                    className="shrink-0 bg-[var(--color-accent)] px-5 py-2 text-sm font-medium text-[var(--color-accent-contrast)] transition-none hover:opacity-90"
                   >
                     保存并批改下一位
                   </button>
@@ -188,7 +188,7 @@ export default function TasksGrading() {
           </>
         ) : (
           <div className="flex flex-1 items-center justify-center">
-            <p className="text-sm text-[#8E918F]">
+            <p className="text-sm text-[var(--color-muted)]">
               选择左侧任务开始批改
             </p>
           </div>
@@ -202,26 +202,26 @@ export default function TasksGrading() {
           onClick={() => setShowNewTask(false)}
         >
           <div
-            className="w-[400px] border border-[#2D2D2D] bg-[#121212] p-6"
+            className="w-[400px] border border-[var(--color-border)] bg-[var(--color-bg)] p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="mb-4 text-sm font-bold text-[#FFFFFF]">新建任务</h3>
+            <h3 className="mb-4 text-sm font-bold text-[var(--color-text)]">新建任务</h3>
             <div className="space-y-4">
               <div>
-                <label className="mb-1 block text-xs text-[#8E918F]">任务名称</label>
+                <label className="mb-1 block text-xs text-[var(--color-muted)]">任务名称</label>
                 <input
-                  className="w-full border border-[#2D2D2D] bg-[#121212] px-3 py-2 text-sm text-[#FFFFFF] outline-none"
-                  style={{ caretColor: "#00FF66" }}
+                  className="w-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm text-[var(--color-text)] outline-none"
+                  style={{ caretColor: "var(--color-accent)" }}
                   value={newTaskTitle}
                   onChange={(e) => setNewTaskTitle(e.target.value)}
                   placeholder="输入任务名称"
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs text-[#8E918F]">作业要求</label>
+                <label className="mb-1 block text-xs text-[var(--color-muted)]">作业要求</label>
                 <textarea
-                  className="w-full border border-[#2D2D2D] bg-[#121212] px-3 py-2 text-sm text-[#FFFFFF] outline-none resize-none"
-                  style={{ caretColor: "#00FF66" }}
+                  className="w-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm text-[var(--color-text)] outline-none resize-none"
+                  style={{ caretColor: "var(--color-accent)" }}
                   rows={4}
                   value={newTaskDesc}
                   onChange={(e) => setNewTaskDesc(e.target.value)}
@@ -229,10 +229,10 @@ export default function TasksGrading() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs text-[#8E918F]">截止时间</label>
+                <label className="mb-1 block text-xs text-[var(--color-muted)]">截止时间</label>
                 <input
                   type="date"
-                  className="w-full border border-[#2D2D2D] bg-[#121212] px-3 py-2 text-sm text-[#FFFFFF] outline-none"
+                  className="w-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm text-[var(--color-text)] outline-none"
                   value={newTaskDeadline}
                   onChange={(e) => setNewTaskDeadline(e.target.value)}
                 />
@@ -240,13 +240,13 @@ export default function TasksGrading() {
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   onClick={() => setShowNewTask(false)}
-                  className="border border-[#2D2D2D] px-4 py-2 text-sm text-[#8E918F]"
+                  className="border border-[var(--color-border)] px-4 py-2 text-sm text-[var(--color-muted)]"
                 >
                   取消
                 </button>
                 <button
                   onClick={() => setShowNewTask(false)}
-                  className="border border-[#00FF66] bg-[#121212] px-4 py-2 text-sm text-[#00FF66]"
+                  className="border border-[var(--color-accent)] bg-[var(--color-bg)] px-4 py-2 text-sm text-[var(--color-accent)]"
                 >
                   创建
                 </button>

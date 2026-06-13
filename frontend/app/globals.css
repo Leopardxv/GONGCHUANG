@@ -1,1 +1,317 @@
 @import "tailwindcss";
+
+:root {
+  --color-bg: #08090b;
+  --color-panel: #151618;
+  --color-panel-strong: #222429;
+  --color-panel-soft: #101114;
+  --color-code-bg: #07080a;
+  --color-text: #f4f4f5;
+  --color-muted: #a5a7ad;
+  --color-subtle: #737780;
+  --color-border: #2c2f35;
+  --color-border-strong: #4a4e57;
+  --color-hover: #25272d;
+  --color-accent: #f7f8f8;
+  --color-accent-contrast: #0b0b0b;
+  --color-shadow: #000000;
+  --color-tint: #c74840;
+  --color-tint-strong: #f0aaa4;
+  --color-tint-soft: rgba(199, 72, 64, 0.14);
+  --color-tint-border: rgba(199, 72, 64, 0.34);
+  --color-warm: #d8bd8f;
+  --color-warm-soft: rgba(216, 189, 143, 0.14);
+  --color-sage: #9ab8a6;
+  --color-sage-strong: #bdd5c6;
+  --color-sage-soft: rgba(154, 184, 166, 0.14);
+  --color-sage-border: rgba(154, 184, 166, 0.3);
+  --color-danger: #f85149;
+  --color-warning: #d2991d;
+}
+
+:root[data-theme="light"] {
+  --color-bg: #f5f5f7;
+  --color-panel: #ffffff;
+  --color-panel-strong: #eceef2;
+  --color-panel-soft: #fafafa;
+  --color-code-bg: #eef0f4;
+  --color-text: #111113;
+  --color-muted: #5f636a;
+  --color-subtle: #9297a0;
+  --color-border: #d8dbe1;
+  --color-border-strong: #b9bec8;
+  --color-hover: #edeff3;
+  --color-accent: #111317;
+  --color-accent-contrast: #ffffff;
+  --color-shadow: #8d96a3;
+  --color-tint: #b93a34;
+  --color-tint-strong: #8e2b27;
+  --color-tint-soft: rgba(185, 58, 52, 0.09);
+  --color-tint-border: rgba(185, 58, 52, 0.22);
+  --color-warm: #9b6f2f;
+  --color-warm-soft: rgba(155, 111, 47, 0.1);
+  --color-sage: #5f806c;
+  --color-sage-strong: #375a46;
+  --color-sage-soft: rgba(95, 128, 108, 0.1);
+  --color-sage-border: rgba(95, 128, 108, 0.22);
+  --color-danger: #c23a35;
+  --color-warning: #9f6b00;
+}
+
+html {
+  background: var(--color-bg);
+}
+
+body {
+  background:
+    radial-gradient(circle at 50% -10%, color-mix(in srgb, var(--color-tint) 16%, transparent) 0%, transparent 34%),
+    radial-gradient(circle at 85% 8%, color-mix(in srgb, var(--color-warm) 8%, transparent) 0%, transparent 30%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-panel-strong) 24%, var(--color-bg)) 0%, var(--color-bg) 48%),
+    var(--color-bg);
+  color: var(--color-text);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+}
+
+.surface {
+  border: 1px solid color-mix(in srgb, var(--color-border) 72%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-panel) 96%, white 4%) 0%, var(--color-panel) 100%);
+  box-shadow: 0 18px 55px color-mix(in srgb, var(--color-shadow) 14%, transparent);
+}
+
+.surface-soft {
+  border: 1px solid color-mix(in srgb, var(--color-border) 64%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-panel-soft) 86%, var(--color-panel) 14%) 0%, var(--color-panel-soft) 100%);
+}
+
+.hero-surface {
+  background:
+    radial-gradient(circle at 88% 0%, color-mix(in srgb, var(--color-tint) 22%, transparent) 0%, transparent 36%),
+    radial-gradient(circle at 18% 100%, color-mix(in srgb, var(--color-warm) 10%, transparent) 0%, transparent 30%),
+    linear-gradient(135deg, color-mix(in srgb, var(--color-panel) 92%, var(--color-panel-strong) 8%) 0%, var(--color-panel-soft) 100%);
+  border: 1px solid color-mix(in srgb, var(--color-border) 64%, transparent);
+  box-shadow: 0 28px 90px color-mix(in srgb, var(--color-shadow) 18%, transparent);
+}
+
+.quiet-link {
+  color: var(--color-muted);
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+.quiet-link:hover {
+  color: var(--color-text);
+}
+
+.tint-text {
+  color: var(--color-tint);
+}
+
+.tint-panel {
+  border-color: var(--color-tint-border);
+  background:
+    radial-gradient(circle at 100% 0%, var(--color-tint-soft) 0%, transparent 46%),
+    var(--color-panel-soft);
+}
+
+.sage-panel {
+  border-color: var(--color-sage-border);
+  background:
+    radial-gradient(circle at 100% 0%, var(--color-sage-soft) 0%, transparent 46%),
+    var(--color-panel-soft);
+}
+
+.warm-panel {
+  border-color: color-mix(in srgb, var(--color-warm) 28%, var(--color-border));
+  background:
+    radial-gradient(circle at 100% 0%, var(--color-warm-soft) 0%, transparent 46%),
+    var(--color-panel-soft);
+}
+
+.auth-scene {
+  isolation: isolate;
+}
+
+.auth-scene::after {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  content: "";
+  background:
+    radial-gradient(circle at 50% 50%, transparent 0%, transparent 42%, color-mix(in srgb, var(--color-bg) 78%, transparent) 100%),
+    linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--color-bg) 42%, transparent) 100%);
+}
+
+.auth-grid {
+  position: absolute;
+  inset: -20%;
+  z-index: 0;
+  opacity: 0.28;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--color-border) 56%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-border) 56%, transparent) 1px, transparent 1px);
+  background-size: 72px 72px;
+  transform: perspective(800px) rotateX(58deg) translateY(8%);
+  transform-origin: center;
+}
+
+.auth-scanline {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.16;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--color-tint) 26%, transparent) 48%,
+    transparent 100%
+  );
+  animation: auth-scan 7s ease-in-out infinite;
+}
+
+.auth-orb {
+  position: absolute;
+  z-index: 0;
+  border-radius: 999px;
+  filter: blur(44px);
+  opacity: 0.34;
+  animation: auth-breathe 8s ease-in-out infinite;
+}
+
+.auth-orb-blue {
+  top: 8%;
+  right: 18%;
+  width: 360px;
+  height: 360px;
+  background: var(--color-tint-soft);
+}
+
+.auth-orb-sage {
+  bottom: 14%;
+  left: 12%;
+  width: 320px;
+  height: 320px;
+  background: var(--color-sage-soft);
+  animation-delay: -2.5s;
+}
+
+.auth-orb-warm {
+  top: 26%;
+  left: 28%;
+  width: 220px;
+  height: 220px;
+  background: var(--color-warm-soft);
+  animation-delay: -4s;
+}
+
+.auth-code-plane {
+  position: absolute;
+  left: -8%;
+  right: -8%;
+  z-index: 1;
+  display: grid;
+  gap: 18px;
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 13px;
+  color: color-mix(in srgb, var(--color-muted) 72%, transparent);
+  transform: rotate(-8deg);
+  mask-image: linear-gradient(90deg, transparent 0%, black 16%, black 84%, transparent 100%);
+}
+
+.auth-code-plane-a {
+  top: 18%;
+}
+
+.auth-code-plane-b {
+  bottom: 18%;
+  opacity: 0.62;
+  transform: rotate(7deg);
+}
+
+.auth-code-stream {
+  display: flex;
+  width: max-content;
+  gap: 42px;
+  white-space: nowrap;
+  animation: auth-code-drift 32s linear infinite;
+}
+
+.auth-code-stream span {
+  padding: 7px 12px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 58%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-panel) 46%, transparent);
+  box-shadow: 0 10px 40px color-mix(in srgb, var(--color-shadow) 12%, transparent);
+}
+
+.auth-code-stream-reverse {
+  animation-direction: reverse;
+  animation-duration: 38s;
+}
+
+.auth-terminal-card {
+  position: absolute;
+  z-index: 4;
+  display: none;
+  max-width: 260px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--color-panel) 74%, transparent);
+  padding: 18px;
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--color-muted);
+  box-shadow: 0 24px 80px color-mix(in srgb, var(--color-shadow) 22%, transparent);
+  backdrop-filter: blur(18px);
+}
+
+.auth-terminal-left {
+  bottom: 11%;
+  left: 9%;
+}
+
+.auth-terminal-right {
+  top: 13%;
+  right: 10%;
+}
+
+@media (min-width: 1024px) {
+  .auth-terminal-card {
+    display: block;
+  }
+}
+
+@keyframes auth-code-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes auth-scan {
+  0%, 100% {
+    transform: translateY(-65%);
+  }
+  50% {
+    transform: translateY(65%);
+  }
+}
+
+@keyframes auth-breathe {
+  0%, 100% {
+    transform: scale(0.96);
+    opacity: 0.28;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.42;
+  }
+}

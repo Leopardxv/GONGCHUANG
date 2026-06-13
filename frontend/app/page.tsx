@@ -1,18 +1,21 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/authStore";
 import { authService } from "@/services/auth.service";
 import { aiService, type ChatMessage } from "@/services/ai.service";
 import { useChatStore } from "@/stores/chatStore";
 import type { UserStats } from "@/types/user";
+import { textbookExercises } from "@/data/exercises";
+import AuthScene from "@/components/AuthScene";
+import ICTLogo from "@/components/ICTLogo";
 
-/* ── Mini UESTC badge for sidebar ── */
+/* ── Mini ICT badge for sidebar ── */
 function MiniBadge() {
-  return (
-    <img src="/badge.webp" alt="UESTC" className="h-[22px] w-[22px] shrink-0 rounded-full object-contain opacity-90" />
-  );
+  return <ICTLogo size="sm" />;
 }
 
 /* ── Nav item icons ── */
@@ -42,6 +45,13 @@ const iconPlus = (
     <line x1="5" y1="12" x2="19" y2="12" />
   </svg>
 );
+
+function formatDuration(minutes: number): string {
+  if (minutes <= 0) return "00:00:00";
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00`;
+}
 
 /* ── Typewriter ── */
 function useTypewriter(text: string, speed = 100, start = true) {
@@ -80,7 +90,7 @@ function SendArrow({ active }: { active: boolean }) {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={`transition-colors ${active ? "text-[#00FF66]" : "text-[#757575]"}`}
+      className={`transition-colors ${active ? "text-[var(--color-accent)]" : "text-[var(--color-muted)]"}`}
     >
       <line x1="12" y1="19" x2="12" y2="5" />
       <polyline points="5 12 12 5 19 12" />
@@ -141,13 +151,6 @@ function Sidebar({
     onNavChange("chat");
   }, [newConversation, onNavChange]);
 
-  function formatDuration(minutes: number): string {
-    if (minutes <= 0) return "00:00:00";
-    const h = Math.floor(minutes / 60);
-    const m = minutes % 60;
-    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00`;
-  }
-
   function formatTime(ts: number) {
     const d = new Date(ts);
     const now = new Date();
@@ -159,18 +162,18 @@ function Sidebar({
 
   return (
     <aside
-      className={`relative flex flex-col border-r border-white/[0.06] bg-[#0B0B0B] transition-all duration-200 ${
+      className={`relative flex flex-col border-r border-[var(--color-border)] bg-[var(--color-panel-soft)] shadow-[8px_0_30px_color-mix(in_srgb,var(--color-shadow)_16%,transparent)] transition-all duration-200 ${
         collapsed ? "w-14" : "w-[260px]"
       }`}
     >
       <div
-        className={`flex items-center border-b border-white/[0.06] px-3 py-3.5 ${
+        className={`flex items-center border-b border-[var(--color-border)] px-3 py-3.5 ${
           collapsed ? "justify-center" : "gap-2.5"
         }`}
       >
         <button
           onClick={onToggle}
-          className="shrink-0 text-lg leading-none text-[#757575] transition-colors hover:text-[#E6E6E6]"
+          className="shrink-0 text-lg leading-none text-[var(--color-muted)] transition-colors hover:text-[var(--color-text)]"
           aria-label={collapsed ? "展开侧边栏" : "收起侧边栏"}
         >
           ☰
@@ -178,8 +181,8 @@ function Sidebar({
         {!collapsed && (
           <div className="flex min-w-0 items-center gap-2">
             <MiniBadge />
-            <span className="truncate text-sm font-medium text-[#E6E6E6]">
-              在线Linux学习平台
+            <span className="truncate text-sm font-medium text-[var(--color-text)]">
+              ICT数字化教学平台
             </span>
           </div>
         )}
@@ -190,7 +193,7 @@ function Sidebar({
           href="/textbook"
           className={`flex w-full items-center gap-3 px-3 py-2.5 text-sm transition-colors ${
             collapsed ? "justify-center px-0" : ""
-          } text-[#757575] hover:text-[#E6E6E6]`}
+          } text-[var(--color-muted)] hover:text-[var(--color-text)]`}
           title="数字教材"
         >
           <span className="shrink-0">{iconTextbook}</span>
@@ -204,8 +207,8 @@ function Sidebar({
             collapsed ? "justify-center px-0" : ""
           } ${
             activeNav === "playground"
-              ? "text-[#E6E6E6]"
-              : "text-[#757575] hover:text-[#E6E6E6]"
+              ? "text-[var(--color-text)]"
+              : "text-[var(--color-muted)] hover:text-[var(--color-text)]"
           }`}
           title="Playground"
         >
@@ -219,7 +222,7 @@ function Sidebar({
             href="/teacher"
             className={`flex w-full items-center gap-3 px-3 py-2.5 text-sm transition-colors ${
               collapsed ? "justify-center px-0" : ""
-            } text-[#757575] hover:text-[#E6E6E6]`}
+            } text-[var(--color-muted)] hover:text-[var(--color-text)]`}
             title="教师控制台"
           >
             <span className="shrink-0">
@@ -245,8 +248,8 @@ function Sidebar({
               collapsed ? "justify-center px-0" : ""
             } ${
               activeNav === "chat" && !chatExpanded
-                ? "text-[#E6E6E6]"
-                : "text-[#757575] hover:text-[#E6E6E6]"
+                ? "text-[var(--color-text)]"
+                : "text-[var(--color-muted)] hover:text-[var(--color-text)]"
             }`}
           >
             <span className="shrink-0">{iconChat}</span>
@@ -258,7 +261,7 @@ function Sidebar({
                     e.stopPropagation();
                     handleNewConversation();
                   }}
-                  className="shrink-0 rounded p-0.5 text-[#757575] transition-colors hover:text-[#00FF66]"
+                  className="shrink-0 rounded p-0.5 text-[var(--color-muted)] transition-colors hover:text-[var(--color-accent)]"
                   title="新对话"
                 >
                   {iconPlus}
@@ -268,9 +271,9 @@ function Sidebar({
           </div>
 
           {!collapsed && chatExpanded && (
-            <div className="ml-9 border-l border-white/[0.06] py-1">
+            <div className="ml-9 border-l border-[var(--color-border)] py-1">
               {conversations.length === 0 ? (
-                <p className="px-3 py-3 text-xs text-[#757575]">
+                <p className="px-3 py-3 text-xs text-[var(--color-muted)]">
                   暂无对话，点击 + 开始
                 </p>
               ) : (
@@ -291,21 +294,21 @@ function Sidebar({
                       <span
                         className={`block h-2 w-2 shrink-0 transition-colors ${
                           activeConversationId === conv.id
-                            ? "bg-[#00FF66]"
-                            : "bg-transparent border border-white/[0.15]"
+                            ? "bg-[var(--color-accent)]"
+                            : "bg-transparent border border-[var(--color-border)]"
                         }`}
                       />
                       <span className="min-w-0 flex-1">
                         <span
                           className={`block truncate ${
                             activeConversationId === conv.id
-                              ? "text-[#E6E6E6]"
-                              : "text-[#757575]"
+                              ? "text-[var(--color-text)]"
+                              : "text-[var(--color-muted)]"
                           }`}
                         >
                           {conv.title}
                         </span>
-                        <span className="text-[10px] text-[#484f58]">
+                        <span className="text-[10px] text-[var(--color-subtle)]">
                           {formatTime(conv.createdAt)}
                         </span>
                       </span>
@@ -317,7 +320,7 @@ function Sidebar({
                           e.stopPropagation();
                           deleteConversation(conv.id);
                         }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 text-[#484f58] transition-colors hover:text-[#f85149]"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 text-[var(--color-subtle)] transition-colors hover:text-[var(--color-danger)]"
                         title="删除对话"
                       >
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -334,53 +337,53 @@ function Sidebar({
         </div>
       </nav>
 
-      <div className="relative border-t border-white/[0.06]">
+      <div className="relative border-t border-[var(--color-border)]">
         <button
           onClick={() => setShowPopover((v) => !v)}
-          className={`flex w-full items-center gap-3 px-3 py-3 text-left transition-colors hover:bg-white/[0.03] ${
+          className={`flex w-full items-center gap-3 px-3 py-3 text-left transition-colors hover:bg-[var(--color-hover)] ${
             collapsed ? "justify-center" : ""
           }`}
           title={username}
         >
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] text-xs font-medium text-[#E6E6E6]">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-panel-strong)] text-xs font-medium text-[var(--color-text)]">
             {username.charAt(0).toUpperCase()}
           </span>
           {!collapsed && (
-            <span className="truncate text-sm text-[#E6E6E6]">{username}</span>
+            <span className="truncate text-sm text-[var(--color-text)]">{username}</span>
           )}
         </button>
 
         {showPopover && (
           <div
             ref={popoverRef}
-            className="absolute bottom-full left-3 mb-2 w-56 border border-white/[0.08] bg-[#111] p-4"
+            className="absolute bottom-full left-3 mb-2 w-56 rounded-lg border border-[var(--color-border)] bg-[var(--color-panel)] p-4 shadow-[0_18px_50px_color-mix(in_srgb,var(--color-shadow)_32%,transparent)]"
             style={{ zIndex: 50 }}
           >
-            <p className="mb-3 text-xs font-semibold tracking-wide text-[#E6E6E6]">
+            <p className="mb-3 text-xs font-semibold tracking-wide text-[var(--color-text)]">
               学习数据
             </p>
             <div className="space-y-2 text-xs">
               <div className="flex justify-between">
-                <span className="text-[#757575]">今日学习时长</span>
-                <span className="font-mono text-[#E6E6E6]">
+                <span className="text-[var(--color-muted)]">今日学习时长</span>
+                <span className="font-mono text-[var(--color-text)]">
                   {stats ? formatDuration(stats.today_duration_minutes) : "..."}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#757575]">今日执行命令</span>
-                <span className="font-mono text-[#E6E6E6]">
+                <span className="text-[var(--color-muted)]">今日执行命令</span>
+                <span className="font-mono text-[var(--color-text)]">
                   {stats !== null ? stats.today_commands : "..."}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#757575]">AI 分析次数</span>
-                <span className="font-mono text-[#E6E6E6]">
+                <span className="text-[var(--color-muted)]">AI 分析次数</span>
+                <span className="font-mono text-[var(--color-text)]">
                   {stats !== null ? stats.total_analyses : "..."}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#757575]">教材阅读进度</span>
-                <span className="font-mono text-[#E6E6E6]">
+                <span className="text-[var(--color-muted)]">教材阅读进度</span>
+                <span className="font-mono text-[var(--color-text)]">
                   {stats !== null ? `${stats.textbook_progress}%` : "..."}
                 </span>
               </div>
@@ -392,20 +395,289 @@ function Sidebar({
   );
 }
 
+/* ── Lightweight Markdown renderer for assistant replies ── */
+function InlineMarkdown({ text }: { text: string }) {
+  const parts = text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g).filter(Boolean);
+
+  return (
+    <>
+      {parts.map((part, index) => {
+        if (part.startsWith("`") && part.endsWith("`")) {
+          return (
+            <code
+              key={index}
+              className="rounded border border-[var(--color-border)] bg-[var(--color-code-bg)] px-1.5 py-0.5 font-mono text-[0.92em] text-[var(--color-text)]"
+            >
+              {part.slice(1, -1)}
+            </code>
+          );
+        }
+        if (part.startsWith("**") && part.endsWith("**")) {
+          return (
+            <strong key={index} className="font-semibold text-[var(--color-text)]">
+              {part.slice(2, -2)}
+            </strong>
+          );
+        }
+        return <span key={index}>{part}</span>;
+      })}
+    </>
+  );
+}
+
+function MarkdownMessage({ content }: { content: string }) {
+  const blocks = content.split(/(```[\s\S]*?```)/g).filter((block) => block.length > 0);
+
+  return (
+    <div className="space-y-3 text-sm leading-6">
+      {blocks.map((block, blockIndex) => {
+        if (block.startsWith("```")) {
+          const code = block.replace(/^```[a-zA-Z0-9_-]*\n?/, "").replace(/```$/, "");
+          return (
+            <pre
+              key={blockIndex}
+              className="max-w-full overflow-x-auto rounded-lg border border-[var(--color-border)] bg-[var(--color-code-bg)] p-3"
+            >
+              <code className="font-mono text-xs leading-5 text-[var(--color-text)]">
+                {code.trimEnd()}
+              </code>
+            </pre>
+          );
+        }
+
+        const lines = block.split(/\n+/).filter((line) => line.trim().length > 0);
+        const elements: ReactNode[] = [];
+        let listItems: string[] = [];
+
+        function flushList(key: string) {
+          if (listItems.length === 0) return;
+          elements.push(
+            <ul key={key} className="space-y-1 pl-5 text-[var(--color-text)]">
+              {listItems.map((item, index) => (
+                <li key={index} className="list-disc marker:text-[var(--color-muted)]">
+                  <InlineMarkdown text={item} />
+                </li>
+              ))}
+            </ul>,
+          );
+          listItems = [];
+        }
+
+        lines.forEach((line, lineIndex) => {
+          const trimmed = line.trim();
+          const listMatch = trimmed.match(/^[-*]\s+(.+)$/);
+
+          if (listMatch) {
+            listItems.push(listMatch[1]);
+            return;
+          }
+
+          flushList(`${blockIndex}-list-${lineIndex}`);
+
+          if (trimmed.startsWith("### ")) {
+            elements.push(
+              <h3 key={`${blockIndex}-${lineIndex}`} className="pt-1 text-base font-semibold text-[var(--color-text)]">
+                <InlineMarkdown text={trimmed.slice(4)} />
+              </h3>,
+            );
+          } else if (trimmed.startsWith("## ")) {
+            elements.push(
+              <h2 key={`${blockIndex}-${lineIndex}`} className="pt-1 text-lg font-semibold text-[var(--color-text)]">
+                <InlineMarkdown text={trimmed.slice(3)} />
+              </h2>,
+            );
+          } else if (trimmed.startsWith("# ")) {
+            elements.push(
+              <h1 key={`${blockIndex}-${lineIndex}`} className="pt-1 text-xl font-semibold text-[var(--color-text)]">
+                <InlineMarkdown text={trimmed.slice(2)} />
+              </h1>,
+            );
+          } else {
+            elements.push(
+              <p key={`${blockIndex}-${lineIndex}`} className="text-[var(--color-text)]">
+                <InlineMarkdown text={trimmed} />
+              </p>,
+            );
+          }
+        });
+
+        flushList(`${blockIndex}-list-end`);
+
+        return <div key={blockIndex} className="space-y-2">{elements}</div>;
+      })}
+    </div>
+  );
+}
+
+function isCompleteRunnableCommand(cmd: string): boolean {
+  const trimmed = cmd.trim();
+  if (!trimmed) return false;
+
+  // 1. Filter out command placeholders (e.g. <filename>, <service>, [options])
+  if (/<[a-zA-Z_][a-zA-Z0-9_-]*>/.test(trimmed) || /\[[a-zA-Z_][a-zA-Z0-9_-]*\]/.test(trimmed)) {
+    return false;
+  }
+  if (trimmed.includes("...") || trimmed.includes("…")) {
+    return false;
+  }
+
+  const words = trimmed.split(/\s+/);
+  const firstWord = words[0];
+
+  // List of commands that are fully valid/executable and produce output with zero arguments
+  const zeroArgAllowed = ["pwd", "who", "df", "free", "last", "env", "ls", "date", "uptime", "hexdump"];
+
+  // List of commands that logically require arguments to make sense or be syntactically valid in a shell
+  const needsArgs = [
+    "cd", "mkdir", "rm", "cp", "mv", "cat", "tar", "grep", "find", 
+    "systemctl", "docker", "timedatectl", "type", "echo", 
+    "chmod", "chown", "passwd", "useradd", "dnf", "yum", "rpm", "ip", "ping", 
+    "tail", "head", "less", "more", "wc", "du", "lsof", "xz", "tee", "xargs"
+  ];
+
+  if (words.length === 1) {
+    return zeroArgAllowed.includes(firstWord);
+  }
+
+  // Check if the last word looks like an ellipsis or placeholder
+  const lastWord = words[words.length - 1];
+  if (
+    lastWord === "..." || 
+    lastWord === "etc" || 
+    lastWord === "etc." || 
+    lastWord.startsWith("<") || 
+    lastWord.endsWith(">") ||
+    lastWord.startsWith("[") ||
+    lastWord.endsWith("]")
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+function parseAssistantMessageActions(content: string) {
+  const pages: number[] = [];
+  const commands: string[] = [];
+
+  // 1. Extract pages
+  const pageRegexes = [
+    /第\s*(\d+)\s*页/g,
+    /[Pp]age\s*(\d+)/g,
+    /\b[Pp]\.?\s*(\d+)\b/g
+  ];
+  for (const regex of pageRegexes) {
+    let match;
+    regex.lastIndex = 0;
+    while ((match = regex.exec(content)) !== null) {
+      const p = parseInt(match[1], 10);
+      if (p >= 1 && p <= 300 && !pages.includes(p)) {
+        pages.push(p);
+      }
+    }
+  }
+
+  // 2. Extract code blocks (triple backticks)
+  const tripleBacktickRegex = /```(?:bash|sh|shell|cmd|powershell)?\n([\s\S]*?)\n```/g;
+  let match;
+  tripleBacktickRegex.lastIndex = 0;
+  while ((match = tripleBacktickRegex.exec(content)) !== null) {
+    const code = match[1].trim();
+    const lines = code.split("\n").map(l => l.trim()).filter(Boolean);
+    lines.forEach(line => {
+      const cleanLine = line.replace(/^\$\s*/, "").replace(/^#\s*/, "").trim();
+      if (
+        cleanLine && 
+        !cleanLine.startsWith("#") && 
+        isCompleteRunnableCommand(cleanLine) && 
+        !commands.includes(cleanLine) && 
+        cleanLine.length < 120
+      ) {
+        commands.push(cleanLine);
+      }
+    });
+  }
+
+  // 3. Extract inline commands in single backticks
+  const inlineRegex = /`([^`\n]+)`/g;
+  inlineRegex.lastIndex = 0;
+  while ((match = inlineRegex.exec(content)) !== null) {
+    const code = match[1].trim();
+    const commonCmds = [
+      "ls", "cd", "pwd", "mkdir", "rm", "cp", "mv", "cat", "tar", "grep", "find", 
+      "systemctl", "docker", "timedatectl", "who", "df", "free", "type", "echo", 
+      "chmod", "chown", "passwd", "useradd", "dnf", "yum", "rpm", "ip", "ping", 
+      "tail", "head", "less", "more", "wc", "du", "hexdump", "lsof", "xz", "tee", "xargs"
+    ];
+    const firstWord = code.split(/\s+/)[0];
+    if (
+      (commonCmds.includes(firstWord) || code.includes(" | ") || code.includes(" > ") || code.includes(" < ")) &&
+      isCompleteRunnableCommand(code) &&
+      code.length < 80 &&
+      !commands.includes(code)
+    ) {
+      commands.push(code);
+    }
+  }
+
+  return { pages, commands };
+}
+
 /* ── Chat message bubble ── */
 function ChatBubble({ msg }: { msg: ChatMessage }) {
   const isUser = msg.role === "user";
+  const router = useRouter();
+
+  const { pages, commands } = useMemo(() => {
+    if (isUser) return { pages: [], commands: [] };
+    return parseAssistantMessageActions(msg.content);
+  }, [msg.content, isUser]);
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
       <div
-        className={`max-w-[75%] whitespace-pre-wrap rounded-lg px-4 py-2.5 text-sm ${
+        className={`max-w-[75%] rounded-lg border px-4 py-2.5 text-sm shadow-[0_10px_30px_color-mix(in_srgb,var(--color-shadow)_10%,transparent)] ${
           isUser
-            ? "bg-white/[0.06] text-[#E6E6E6]"
-            : "text-[#E6E6E6]"
+            ? "whitespace-pre-wrap border-[var(--color-border-strong)] bg-[var(--color-panel-strong)] text-[var(--color-text)]"
+            : "border-transparent bg-[var(--color-panel-soft)] text-[var(--color-text)]"
         }`}
       >
-        {msg.content}
+        {isUser ? (
+          msg.content
+        ) : (
+          <>
+            <MarkdownMessage content={msg.content} />
+            
+            {(pages.length > 0 || commands.length > 0) && (
+              <div className="mt-4 border-t border-[color-mix(in_srgb,var(--color-border)_42%,transparent)] pt-3">
+                <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+                  ⚡ 一键直达
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {pages.map((p) => (
+                    <button
+                      key={`page-${p}`}
+                      onClick={() => router.push(`/textbook?page=${p}`)}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-tint-border)] bg-[var(--color-tint-soft)] px-3 py-1 text-xs font-medium text-[var(--color-tint-strong)] transition-all hover:bg-[var(--color-tint)] hover:text-white cursor-pointer"
+                    >
+                      📖 学习教材第 {p} 页
+                    </button>
+                  ))}
+                  
+                  {commands.map((cmd) => (
+                    <button
+                      key={`cmd-${cmd}`}
+                      onClick={() => router.push(`/playground?command=${encodeURIComponent(cmd)}`)}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-3 py-1 text-xs font-mono text-[var(--color-muted)] transition-all hover:border-[var(--color-tint-border)] hover:bg-[var(--color-hover)] hover:text-[var(--color-text)] cursor-pointer"
+                    >
+                      💻 终端运行: <code className="bg-transparent p-0 font-semibold text-[var(--color-text)]">{cmd}</code>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
@@ -436,11 +708,7 @@ function ChatInput({
 
   return (
     <div className="mx-auto w-full max-w-[680px] px-4 pb-6">
-      <div className="flex items-end gap-2 rounded-full border border-white/[0.08] bg-[#0B0B0B] px-4 py-3 transition-colors focus-within:border-white/[0.16]">
-        <span className="mb-0.5 shrink-0 font-mono text-sm text-[#00FF66] select-none">
-          $
-        </span>
-
+      <div className="flex items-end gap-2 rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel)] px-4 py-3 shadow-[0_18px_55px_color-mix(in_srgb,var(--color-shadow)_22%,transparent)] transition-colors focus-within:border-[var(--color-border-strong)]">
         <textarea
           ref={textareaRef}
           value={value}
@@ -459,7 +727,7 @@ function ChatInput({
           rows={1}
           placeholder="问点什么吧..."
           disabled={disabled}
-          className="flex-1 resize-none bg-transparent py-0 text-sm leading-6 text-[#E6E6E6] outline-none placeholder:text-[#757575] disabled:opacity-40"
+          className="flex-1 resize-none bg-transparent py-0 text-sm leading-6 text-[var(--color-text)] outline-none placeholder:text-[var(--color-muted)] disabled:opacity-40"
         />
 
         <button
@@ -467,13 +735,185 @@ function ChatInput({
           disabled={!hasText || disabled}
           className={`shrink-0 rounded-full p-1.5 transition-colors ${
             hasText && !disabled
-              ? "cursor-pointer hover:bg-white/[0.08]"
+              ? "cursor-pointer hover:bg-[var(--color-hover)]"
               : "cursor-default"
           }`}
           aria-label="发送"
         >
           <SendArrow active={hasText && !disabled} />
         </button>
+      </div>
+    </div>
+  );
+}
+
+function StudentWorkspace({
+  username,
+  stats,
+  onPrompt,
+  disabled,
+}: {
+  username: string;
+  stats: UserStats | null;
+  onPrompt: (text: string) => void;
+  disabled: boolean;
+}) {
+  const featuredExercises = textbookExercises.slice(0, 3);
+  const prompts = [
+    "帮我规划今天的 Linux 学习任务",
+    "总结一下管道和重定向的区别",
+    "我应该先做哪个教材实验？",
+  ];
+  const capabilityTags = ["PDF 教材联动", "xterm 实验", "AI 命令辅导", "学习进度追踪"];
+  const overview = [
+    {
+      label: "今日学习",
+      value: stats ? formatDuration(stats.today_duration_minutes) : "--:--:--",
+      tone: "tint-panel",
+      dot: "var(--color-tint)",
+    },
+    {
+      label: "执行命令",
+      value: stats ? `${stats.today_commands}` : "--",
+      tone: "sage-panel",
+      dot: "var(--color-sage)",
+    },
+    {
+      label: "教材进度",
+      value: stats ? `${stats.textbook_progress}%` : "--",
+      tone: "warm-panel",
+      dot: "var(--color-warm)",
+    },
+  ];
+
+  return (
+    <div className="flex flex-1 overflow-y-auto px-8 py-10">
+      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 lg:grid-cols-12">
+        <section className="hero-surface overflow-hidden rounded-[30px] px-8 py-10 lg:col-span-8">
+          <div className="flex h-full flex-col justify-between">
+            <div>
+              <p className="text-sm font-medium text-[var(--color-muted)]">欢迎回来，{username}</p>
+              <h1 className="mt-3 max-w-3xl text-5xl font-semibold leading-[1.08] tracking-normal text-[var(--color-text)]">
+                继续你的 openEuler 学习路径
+              </h1>
+              <p className="mt-5 max-w-2xl text-base leading-7 text-[var(--color-muted)]">
+                教材阅读、终端实验和 AI 辅导已经连接起来。你可以从教材页进入对应练习，也可以直接在 Playground 完成实验步骤。
+              </p>
+              <div className="mt-7 flex flex-wrap gap-2">
+                {capabilityTags.map((tag, index) => (
+                  <span
+                    key={tag}
+                    className={`rounded-full border px-3 py-1.5 text-xs ${
+                      index === 0
+                        ? "border-[var(--color-tint-border)] bg-[var(--color-tint-soft)] text-[var(--color-tint-strong)]"
+                        : index === 1
+                          ? "border-[var(--color-sage-border)] bg-[var(--color-sage-soft)] text-[var(--color-sage-strong)]"
+                          : index === 2
+                            ? "border-[color-mix(in_srgb,var(--color-warm)_28%,var(--color-border))] bg-[var(--color-warm-soft)] text-[var(--color-warm)]"
+                            : "border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-panel)_42%,transparent)] text-[var(--color-muted)]"
+                    }`}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/textbook"
+                className="rounded-full bg-[var(--color-tint)] px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+              >
+                打开数字教材
+              </Link>
+              <Link
+                href={`/playground?exercise=${featuredExercises[0]?.id ?? ""}`}
+                className="rounded-full border border-[var(--color-border-strong)] bg-transparent px-5 py-2.5 text-sm font-medium text-[var(--color-text)] transition-colors hover:bg-[var(--color-hover)]"
+              >
+                开始教材实验
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <aside className="surface rounded-[30px] p-6 lg:col-span-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">Today</p>
+          <h2 className="mt-2 text-2xl font-semibold text-[var(--color-text)]">学习概览</h2>
+          <div className="mt-5 space-y-3">
+            {overview.map((item) => (
+              <div key={item.label} className={`surface-soft rounded-[22px] p-5 ${item.tone}`}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm text-[var(--color-muted)]">{item.label}</p>
+                  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.dot }} />
+                </div>
+                <p className="mt-3 font-mono text-3xl text-[var(--color-text)]">{item.value}</p>
+              </div>
+            ))}
+          </div>
+        </aside>
+
+        <section className="surface rounded-[30px] p-6 lg:col-span-8">
+          <div className="mb-5 flex items-end justify-between gap-5">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">教材练习</p>
+              <h2 className="mt-2 text-2xl font-semibold text-[var(--color-text)]">可直接进入 xterm 的章节任务</h2>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--color-muted)]">
+                从教材章节直接进入终端实验，完成命令后会自动记录进度。
+              </p>
+            </div>
+            <Link href="/textbook" className="quiet-link text-sm">
+              查看教材
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {featuredExercises.map((exercise) => (
+              <Link
+                key={exercise.id}
+                href={`/playground?exercise=${exercise.id}`}
+                className={`surface-soft rounded-[22px] p-5 transition-transform hover:-translate-y-0.5 ${
+                  exercise.difficulty === "基础"
+                    ? "tint-panel"
+                    : exercise.difficulty === "进阶"
+                      ? "sage-panel"
+                      : "warm-panel"
+                }`}
+              >
+                <p className="text-[11px] text-[var(--color-tint-strong)]">
+                  Page {exercise.textbookPage} · {exercise.difficulty}
+                </p>
+                <h3 className="mt-3 text-base font-semibold leading-6 text-[var(--color-text)]">{exercise.title}</h3>
+                <p className="mt-3 line-clamp-3 text-sm leading-6 text-[var(--color-muted)]">{exercise.objective}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <aside className="space-y-6 lg:col-span-4">
+          <div className="surface rounded-[30px] p-6">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">AI 学习助手</p>
+            <h2 className="mt-2 text-2xl font-semibold leading-8 text-[var(--color-text)]">从一个问题开始</h2>
+            <div className="mt-5 space-y-2.5">
+              {prompts.map((prompt) => (
+                <button
+                  key={prompt}
+                  onClick={() => onPrompt(prompt)}
+                  disabled={disabled}
+                  className="w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel-soft)] px-4 py-3 text-left text-sm leading-5 text-[var(--color-text)] transition-colors hover:border-[var(--color-tint-border)] hover:bg-[var(--color-tint-soft)] disabled:opacity-50"
+                >
+                  {prompt}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="surface-soft warm-panel rounded-[30px] p-6">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">今日建议</p>
+            <ol className="mt-5 space-y-4 text-sm leading-6 text-[var(--color-text)]">
+              <li>1. 阅读 Ch3 Shell 的重定向与管道。</li>
+              <li>2. 在 xterm 中完成对应实验步骤。</li>
+              <li>3. 用 AI 助手复盘命令组合思路。</li>
+            </ol>
+          </div>
+        </aside>
       </div>
     </div>
   );
@@ -494,6 +934,7 @@ export default function Home() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeNav, setActiveNav] = useState("chat");
   const [sending, setSending] = useState(false);
+  const [stats, setStats] = useState<UserStats | null>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
   const activeConversation = conversations.find(
@@ -520,6 +961,11 @@ export default function Home() {
       setUserId(user.id);
     }
   }, [user?.id, setUserId]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    authService.getStats().then(setStats).catch(() => setStats(null));
+  }, [isAuthenticated]);
 
   async function handleSend(text: string) {
     let convId = activeConversationId;
@@ -563,34 +1009,39 @@ export default function Home() {
 
   if (!isAuthenticated || !user) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center gap-8 bg-[#0B0B0B]">
-        <img src="/badge.webp" alt="UESTC" className="h-16 w-16 rounded-full object-contain opacity-90" />
-        <div className="text-center">
-          <h1 className="mb-2 text-2xl font-light tracking-[0.05em] text-[#E6E6E6]">
-            在线Linux学习平台
-          </h1>
-          <p className="text-sm text-[#757575]">登录以开始学习</p>
+      <AuthScene>
+        <div className="flex max-w-2xl flex-col items-center gap-8 text-center">
+          <ICTLogo size="lg" />
+          <div>
+            <p className="mb-3 text-sm font-medium uppercase tracking-[0.22em] text-[var(--color-tint-strong)]">openEuler Lab</p>
+            <h1 className="text-5xl font-semibold leading-tight tracking-normal text-[var(--color-text)]">
+              ICT数字化教学平台
+            </h1>
+            <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-[var(--color-muted)]">
+              在教材、xterm 终端实验和 AI 辅导之间建立一条连续的学习路径。
+            </p>
+          </div>
+          <div className="flex gap-4">
+            <Link
+              href="/login"
+              className="rounded-full bg-[var(--color-tint)] px-8 py-3 font-mono text-sm tracking-wider text-white shadow-[0_12px_36px_var(--color-tint-soft)] transition-opacity hover:opacity-90"
+            >
+              登录
+            </Link>
+            <Link
+              href="/register"
+              className="rounded-full border border-[var(--color-border-strong)] bg-[color-mix(in_srgb,var(--color-panel)_60%,transparent)] px-8 py-3 font-mono text-sm tracking-wider text-[var(--color-text)] backdrop-blur-xl transition-colors hover:bg-[var(--color-hover)]"
+            >
+              注册
+            </Link>
+          </div>
         </div>
-        <div className="flex gap-4">
-          <Link
-            href="/login"
-            className="border border-white/[0.15] px-8 py-2.5 font-mono text-sm tracking-wider text-[#E6E6E6] transition-colors hover:border-[#00FF66] hover:text-[#00FF66]"
-          >
-            登录
-          </Link>
-          <Link
-            href="/register"
-            className="border border-white/[0.15] px-8 py-2.5 font-mono text-sm tracking-wider text-[#E6E6E6] transition-colors hover:border-[#00FF66] hover:text-[#00FF66]"
-          >
-            注册
-          </Link>
-        </div>
-      </main>
+      </AuthScene>
     );
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#0B0B0B]">
+    <div className="flex h-screen overflow-hidden bg-[var(--color-bg)]">
       <Sidebar
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed((v) => !v)}
@@ -600,11 +1051,11 @@ export default function Home() {
         role={user.role}
       />
 
-      <main className="flex flex-1 flex-col">
-        <header className="flex h-13 shrink-0 items-center justify-end border-b border-white/[0.06] px-5">
+      <main className="flex flex-1 flex-col bg-[linear-gradient(180deg,var(--color-panel-soft)_0%,var(--color-bg)_38%)]">
+        <header className="flex h-13 shrink-0 items-center justify-end border-b border-[var(--color-border)] bg-[var(--color-panel-soft)] px-5">
           <button
             onClick={handleLogout}
-            className="text-xs text-[#757575] transition-colors hover:text-[#E6E6E6]"
+            className="text-xs text-[var(--color-muted)] transition-colors hover:text-[var(--color-text)]"
           >
             登出
           </button>
@@ -624,8 +1075,8 @@ export default function Home() {
                     ))}
                     {sending && (
                       <div className="flex justify-start">
-                        <span className="inline-flex items-center gap-1 text-sm text-[#757575]">
-                          <span className="inline-block h-2 w-2 rounded-full bg-[#00FF66] animate-pulse" />
+                        <span className="inline-flex items-center gap-1 text-sm text-[var(--color-muted)]">
+                          <span className="inline-block h-2 w-2 rounded-full bg-[var(--color-accent)] animate-pulse" />
                           AI 思考中...
                         </span>
                       </div>
@@ -636,17 +1087,12 @@ export default function Home() {
               </>
             ) : (
               <>
-                <div className="flex flex-1 flex-col items-center justify-center px-6 pb-12">
-                  <h2 className="mb-4 text-center text-4xl font-light tracking-wide text-[#E6E6E6]">
-                    {username}
-                  </h2>
-                  <p className="font-mono text-lg text-[#E6E6E6]">
-                    {typewriterText}
-                    {!typewriterDone && (
-                      <span className="ml-0.5 inline-block h-5 w-2 animate-pulse bg-[#00FF66] align-middle" />
-                    )}
-                  </p>
-                </div>
+                <StudentWorkspace
+                  username={username}
+                  stats={stats}
+                  onPrompt={handleSend}
+                  disabled={sending}
+                />
                 <ChatInput onSend={handleSend} disabled={sending} />
               </>
             )}

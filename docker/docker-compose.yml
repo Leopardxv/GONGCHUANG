@@ -27,3 +27,8 @@ services:
 
 volumes:
   pgdata:
+
+networks:
+  ll-student-net:
+    name: ll-student-net
+    driver: bridge

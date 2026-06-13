@@ -1,7 +1,9 @@
 import asyncio
 import logging
+import os
 import uuid
 from datetime import datetime, timezone
+from pathlib import Path
 
 import docker
 from docker.errors import NotFound
@@ -18,7 +20,24 @@ from app.modules.terminal.repository import (
 
 logger = logging.getLogger(__name__)
 
-docker_client = docker.from_env()
+_docker_client: docker.DockerClient | None = None
+
+
+def _get_docker_client() -> docker.DockerClient:
+    """Create Docker client lazily, with a Colima socket fallback for macOS dev."""
+    global _docker_client
+    if _docker_client is not None:
+        return _docker_client
+
+    docker_host = os.environ.get("DOCKER_HOST")
+    if not docker_host:
+        colima_socket = Path.home() / ".colima" / "default" / "docker.sock"
+        if colima_socket.exists():
+            docker_host = f"unix://{colima_socket}"
+
+    _docker_client = docker.DockerClient(base_url=docker_host) if docker_host else docker.from_env()
+    _docker_client.ping()
+    return _docker_client
 
 # Module-level task set to keep background AI tasks alive
 _bg_tasks: set[asyncio.Task] = set()
@@ -36,25 +55,35 @@ class TerminalService:
     def _volume_name(self, user_id: str) -> str:
         return f"{settings.DOCKER_VOLUME_PREFIX}{user_id[:12]}"
 
+    def _ensure_network(self) -> None:
+        client = _get_docker_client()
+        network_name = settings.DOCKER_NETWORK
+        try:
+            client.networks.get(network_name)
+        except NotFound:
+            logger.info("Creating Docker network %s", network_name)
+            client.networks.create(name=network_name, driver="bridge")
+
     async def ensure_container(self, user_id: str) -> tuple[str, str]:
         """Ensure a Docker container exists and is running for the user.
 
         Returns (container_id, container_name).
         """
         uid = uuid.UUID(user_id)
-        instance = await self.instance_repo.get_by_user_id(uid)
         container_name = self._container_name(user_id)
+        client = _get_docker_client()
 
-        if instance:
-            try:
-                container = docker_client.containers.get(instance.container_id)
-                if container.status != "running":
-                    container.start()
-                    await self.instance_repo.update_status(instance.id, "running")
-                return container.id, container_name
-            except NotFound:
-                # Container was removed externally — clean up stale DB record
-                await self.instance_repo.delete(instance.id)
+        container = None
+        try:
+            container = client.containers.get(container_name)
+        except NotFound:
+            pass
+
+        if container is not None:
+            if container.status != "running":
+                container.start()
+            await self.instance_repo.upsert(uid, container.id, container_name)
+            return container.id, container_name
 
         return await self._create_container(uid, container_name)
 
@@ -64,10 +93,13 @@ class TerminalService:
         """Create and start a new Docker container for the user."""
         uid_str = str(user_id)
         volume_name = self._volume_name(uid_str)
+        client = _get_docker_client()
+
+        self._ensure_network()
 
         # Remove any stale container with the same name
         try:
-            old = docker_client.containers.get(container_name)
+            old = client.containers.get(container_name)
             old.remove(force=True)
             logger.info("Removed stale container %s", container_name)
         except NotFound:
@@ -75,11 +107,11 @@ class TerminalService:
 
         # Ensure volume exists
         try:
-            docker_client.volumes.get(volume_name)
+            client.volumes.get(volume_name)
         except NotFound:
-            docker_client.volumes.create(name=volume_name)
+            client.volumes.create(name=volume_name)
 
-        container: Container = docker_client.containers.run(
+        container: Container = client.containers.run(
             image=settings.DOCKER_IMAGE,
             name=container_name,
             hostname="linux-lab",
@@ -97,17 +129,25 @@ class TerminalService:
             command="sleep infinity",
         )
 
-        instance = await self.instance_repo.create(
-            user_id=user_id,
-            container_id=container.id,
-            container_name=container_name,
-        )
+        try:
+            await self.instance_repo.upsert(
+                user_id=user_id,
+                container_id=container.id,
+                container_name=container_name,
+            )
+        except Exception:
+            try:
+                container.remove(force=True)
+            except Exception:
+                pass
+            raise
+
         logger.info("Created container %s for user %s", container.id, uid_str)
         return container.id, container_name
 
     async def create_exec_session(self, container_id: str) -> dict:
         """Create a persistent interactive exec session (bash) in the container."""
-        container = docker_client.containers.get(container_id)
+        container = _get_docker_client().containers.get(container_id)
         exec_result = container.client.api.exec_create(
             container_id,
             cmd="bash",
@@ -130,7 +170,7 @@ class TerminalService:
 
     def resize_terminal(self, container_id: str, exec_id: str, cols: int, rows: int) -> None:
         """Resize the exec session PTY."""
-        container = docker_client.containers.get(container_id)
+        container = _get_docker_client().containers.get(container_id)
         container.client.api.exec_resize(exec_id, height=rows, width=cols)
 
     async def log_command(
@@ -184,7 +224,7 @@ class TerminalService:
         if not instance:
             return
         try:
-            container = docker_client.containers.get(instance.container_id)
+            container = _get_docker_client().containers.get(instance.container_id)
             container.stop(timeout=5)
         except NotFound:
             pass

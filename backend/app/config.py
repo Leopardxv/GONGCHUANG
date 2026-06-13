@@ -37,6 +37,9 @@ class Settings(BaseSettings):
 
     # CORS
     CORS_ORIGINS: list[str] = ["http://localhost:3000"]
+    CORS_ORIGIN_REGEX: str | None = r"https://.*\.trycloudflare\.com"
+    COOKIE_SECURE: bool = False
+    COOKIE_SAMESITE: str = "lax"
 
 
 settings = Settings()

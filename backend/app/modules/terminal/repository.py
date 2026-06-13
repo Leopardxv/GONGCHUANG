@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime, timezone
 
 from sqlalchemy import select, update
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.terminal.model import DockerInstance, TerminalLog
@@ -17,19 +18,31 @@ class DockerInstanceRepository:
         )
         return result.scalar_one_or_none()
 
-    async def create(
+    async def upsert(
         self, user_id: uuid.UUID, container_id: str, container_name: str
     ) -> DockerInstance:
-        instance = DockerInstance(
-            user_id=user_id,
-            container_id=container_id,
-            container_name=container_name,
-            status="running",
+        stmt = (
+            pg_insert(DockerInstance)
+            .values(
+                user_id=user_id,
+                container_id=container_id,
+                container_name=container_name,
+                status="running",
+            )
+            .on_conflict_do_update(
+                index_elements=["user_id"],
+                set_={
+                    "container_id": container_id,
+                    "container_name": container_name,
+                    "status": "running",
+                    "last_active_at": datetime.now(timezone.utc),
+                },
+            )
+            .returning(DockerInstance)
         )
-        self.db.add(instance)
+        result = await self.db.execute(stmt)
         await self.db.commit()
-        await self.db.refresh(instance)
-        return instance
+        return result.scalar_one()
 
     async def update_status(self, instance_id: uuid.UUID, status: str) -> None:
         await self.db.execute(

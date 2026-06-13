@@ -2,11 +2,43 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import ICTLogo from "@/components/ICTLogo";
+
+function DashboardIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="8" rx="1.5" />
+      <rect x="14" y="3" width="7" height="5" rx="1.5" />
+      <rect x="14" y="12" width="7" height="9" rx="1.5" />
+      <rect x="3" y="15" width="7" height="6" rx="1.5" />
+    </svg>
+  );
+}
+
+function StudentsIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
+      <circle cx="9.5" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+
+function TasksIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 11l3 3L22 4" />
+      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+    </svg>
+  );
+}
 
 const navItems = [
-  { id: "dashboard", label: "班级学情总览", icon: "📊" },
-  { id: "students", label: "学生进度监控", icon: "👥" },
-  { id: "tasks", label: "任务与作业发布", icon: "🎯" },
+  { id: "dashboard", label: "班级学情总览", icon: <DashboardIcon /> },
+  { id: "students", label: "学生进度监控", icon: <StudentsIcon /> },
+  { id: "tasks", label: "任务与作业发布", icon: <TasksIcon /> },
 ];
 
 interface Props {
@@ -25,20 +57,16 @@ export default function TeacherSidebar({ username, onLogout }: Props) {
   }
 
   return (
-    <aside className="flex h-screen w-[260px] shrink-0 flex-col border-r border-[#2D2D2D] bg-[#121212]">
+    <aside className="flex h-screen w-[260px] shrink-0 flex-col border-r border-[var(--color-border)] bg-[var(--color-bg)]">
       {/* Brand */}
       <Link
         href="/"
-        className="flex items-center gap-3 border-b border-[#2D2D2D] px-5 py-4 transition-colors hover:bg-[#1A1A1A]"
+        className="flex items-center gap-3 border-b border-[var(--color-border)] px-5 py-4 transition-colors hover:bg-[var(--color-panel-strong)]"
       >
-        <img
-          src="/badge.webp"
-          alt="UESTC"
-          className="h-7 w-7 shrink-0 rounded-full object-contain opacity-90"
-        />
-        <span className="text-base font-bold text-[#FFFFFF]">教师控制台</span>
+        <ICTLogo size="sm" />
+        <span className="text-base font-bold text-[var(--color-text)]">教师控制台</span>
         <svg
-          className="ml-auto shrink-0 text-[#8E918F]"
+          className="ml-auto shrink-0 text-[var(--color-muted)]"
           width="14"
           height="14"
           viewBox="0 0 24 24"
@@ -64,14 +92,14 @@ export default function TeacherSidebar({ username, onLogout }: Props) {
               onClick={() => handleNav(item.id)}
               className={`relative flex w-full items-center gap-3 px-5 py-3 text-sm transition-none ${
                 isActive
-                  ? "bg-[#1A1A1A] text-[#FFFFFF]"
-                  : "text-[#8E918F] hover:bg-[#1A1A1A] hover:text-[#FFFFFF]"
+                  ? "bg-[var(--color-panel-strong)] text-[var(--color-text)]"
+                  : "text-[var(--color-muted)] hover:bg-[var(--color-panel-strong)] hover:text-[var(--color-text)]"
               }`}
             >
               {isActive && (
-                <span className="absolute left-0 top-0 h-full w-[3px] bg-[#00FF66]" />
+                <span className="absolute left-0 top-0 h-full w-[3px] bg-[var(--color-accent)]" />
               )}
-              <span className="text-base">{item.icon}</span>
+              <span className="text-[var(--color-muted)]">{item.icon}</span>
               <span>{item.label}</span>
             </button>
           );
@@ -79,10 +107,10 @@ export default function TeacherSidebar({ username, onLogout }: Props) {
       </nav>
 
       {/* Back to main */}
-      <div className="border-t border-[#2D2D2D] px-5 py-3">
+      <div className="border-t border-[var(--color-border)] px-5 py-3">
         <Link
           href="/"
-          className="flex items-center gap-2 text-[#8E918F] transition-colors hover:text-[#00FF66]"
+          className="flex items-center gap-2 text-[var(--color-muted)] transition-colors hover:text-[var(--color-accent)]"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -93,11 +121,11 @@ export default function TeacherSidebar({ username, onLogout }: Props) {
       </div>
 
       {/* Profile */}
-      <div className="flex items-center justify-between border-t border-[#2D2D2D] px-5 py-3.5">
-        <span className="text-sm text-[#FFFFFF]">{username}</span>
+      <div className="flex items-center justify-between border-t border-[var(--color-border)] px-5 py-3.5">
+        <span className="text-sm text-[var(--color-text)]">{username}</span>
         <button
           onClick={onLogout}
-          className="text-[#8E918F] transition-colors hover:text-[#00FF66]"
+          className="text-[var(--color-muted)] transition-colors hover:text-[var(--color-accent)]"
           title="退出"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
