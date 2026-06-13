@@ -101,10 +101,25 @@ class AuthService:
             )
         )
         total_analyses = analysis_result.scalar() or 0
+        user = await self.repo.get_by_id(uid)
+        progress_pct = 0
+        textbook_page = 1
+        if user and user.textbook_progress > 0:
+            progress_pct = min(100, int((user.textbook_progress / 371.0) * 100))
+            textbook_page = user.textbook_progress
 
         return UserStatsResponse(
             today_duration_minutes=duration_minutes,
             today_commands=cmd_count or 0,
             total_analyses=total_analyses,
-            textbook_progress=0,
+            textbook_progress=progress_pct,
+            textbook_page=textbook_page,
         )
+
+    async def update_progress(self, user_id: str, page: int) -> None:
+        uid = uuid.UUID(user_id)
+        user = await self.repo.get_by_id(uid)
+        if user:
+            if page > user.textbook_progress:
+                user.textbook_progress = page
+                await self.db.commit()

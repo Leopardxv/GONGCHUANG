@@ -8,6 +8,7 @@ from app.modules.auth.schema import (
     RegisterRequest,
     UserResponse,
     UserStatsResponse,
+    UpdateProgressRequest,
 )
 from app.modules.auth.service import AuthService, create_access_token
 
@@ -88,3 +89,14 @@ async def get_me(user: dict = Depends(get_current_user), db: AsyncSession = Depe
 async def get_stats(user: dict = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     svc = AuthService(db)
     return await svc.get_stats(user["id"])
+
+
+@router.post("/progress")
+async def update_progress(
+    req: UpdateProgressRequest,
+    user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    svc = AuthService(db)
+    await svc.update_progress(user["id"], req.page)
+    return {"status": "ok"}

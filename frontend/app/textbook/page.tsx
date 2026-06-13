@@ -343,6 +343,14 @@ export default function TextbookPage() {
     const p = parseInt(params.get("page") ?? "1", 10);
     if (p > 1) {
       setCurrentPage(p);
+    } else {
+      authService.getStats().then((stats) => {
+        if (stats && stats.textbook_page && stats.textbook_page > 1) {
+          setCurrentPage(stats.textbook_page);
+        }
+      }).catch((err) => {
+        console.error("[Textbook] Failed to load saved page:", err);
+      });
     }
   }, []);
 
@@ -352,6 +360,14 @@ export default function TextbookPage() {
     }, 150); // Debounce sidebar updates by 150ms
     return () => clearTimeout(handler);
   }, [currentPage]);
+
+  useEffect(() => {
+    if (debouncedPage > 0) {
+      authService.updateProgress(debouncedPage).catch((err) => {
+        console.error("[Textbook] Failed to update progress:", err);
+      });
+    }
+  }, [debouncedPage]);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {

@@ -11,4 +11,5 @@ export interface UserStats {
   today_commands: number;
   total_analyses: number;
   textbook_progress: number;
+  textbook_page?: number;
 }

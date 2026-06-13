@@ -30,3 +30,8 @@ class UserStatsResponse(BaseModel):
     today_commands: int
     total_analyses: int
     textbook_progress: int
+    textbook_page: int = 0
+
+
+class UpdateProgressRequest(BaseModel):
+    page: int = Field(..., ge=1, le=500)

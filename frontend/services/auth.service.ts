@@ -14,4 +14,5 @@ export const authService = {
   logout: () => api.post<void>("/auth/logout"),
   getMe: () => api.get<User>("/auth/me"),
   getStats: () => api.get<UserStats>("/auth/stats"),
+  updateProgress: (page: number) => api.post<{ status: string }>("/auth/progress", { page }),
 };

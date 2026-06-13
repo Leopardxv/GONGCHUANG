@@ -30,7 +30,9 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     print("Initializing database tables...")
     async with engine.begin() as conn:
+        from sqlalchemy import text
         await conn.run_sync(Base.metadata.create_all)
+        await conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS textbook_progress INTEGER DEFAULT 0;"))
     print("Database tables initialized.")
 
     # Seed mock data
