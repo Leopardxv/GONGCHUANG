@@ -334,17 +334,24 @@ function TextbookContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [toc, setToc] = useState<Chapter[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [debouncedPage, setDebouncedPage] = useState(1);
+  
+  // Initialize currentPage synchronously from searchParams if available
+  const [currentPage, setCurrentPage] = useState(() => {
+    const pStr = searchParams.get("page");
+    if (pStr) {
+      const p = parseInt(pStr, 10);
+      if (p > 0) return p;
+    }
+    return 1;
+  });
+  
+  const [debouncedPage, setDebouncedPage] = useState(currentPage);
   const [tocOpen, setTocOpen] = useState(true);
   const isInternalChangeRef = useRef(false);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const p = parseInt(params.get("page") ?? "1", 10);
-    if (p > 1) {
-      setCurrentPage(p);
-    } else {
+    // Only load from authService if we didn't have a page in the URL initially
+    if (!searchParams.get("page")) {
       authService.getStats().then((stats) => {
         if (stats && stats.textbook_page && stats.textbook_page > 1) {
           setCurrentPage(stats.textbook_page);
@@ -353,15 +360,19 @@ function TextbookContent() {
         console.error("[Textbook] Failed to load saved page:", err);
       });
     }
-  }, []);
+  }, []); // Run once on mount
 
   useEffect(() => {
     const pStr = searchParams.get("page");
     if (pStr) {
       const p = parseInt(pStr, 10);
-      if (p > 0 && p !== currentPage) {
-        setCurrentPage(p);
-      }
+      setCurrentPage((prev) => {
+        if (p > 0 && p !== prev) {
+          isInternalChangeRef.current = false; // Mark as external change
+          return p;
+        }
+        return prev;
+      });
     }
   }, [searchParams]);
 

@@ -229,3 +229,14 @@ class TerminalService:
         except NotFound:
             pass
         await self.instance_repo.update_status(instance.id, "stopped")
+
+    async def remove_container(self, user_id: uuid.UUID) -> None:
+        uid_str = str(user_id)
+        container_name = self._container_name(uid_str)
+        client = _get_docker_client()
+        try:
+            container = client.containers.get(container_name)
+            container.remove(force=True)
+            logger.info("Removed broken container %s", container_name)
+        except NotFound:
+            pass

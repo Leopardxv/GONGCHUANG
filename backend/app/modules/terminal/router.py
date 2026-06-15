@@ -53,10 +53,24 @@ async def terminal_connect(ws: WebSocket):
         try:
             exec_session = await svc.create_exec_session(container_id)
         except Exception as e:
-            logger.exception("Failed to create exec session")
-            await ws.send_text(_make_msg("error", message=str(e)))
-            await ws.close(code=4003)
-            return
+            error_str = str(e)
+            logger.warning("Failed to create exec session: %s", error_str)
+            if "OCI runtime exec failed" in error_str or "procReady" in error_str:
+                logger.info("Attempting to recreate container due to OCI error...")
+                try:
+                    await svc.remove_container(uuid.UUID(user_id))
+                    container_id, container_name = await svc.ensure_container(user_id)
+                    exec_session = await svc.create_exec_session(container_id)
+                except Exception as retry_e:
+                    logger.exception("Failed to create exec session after retry")
+                    await ws.send_text(_make_msg("error", message=str(retry_e)))
+                    await ws.close(code=4003)
+                    return
+            else:
+                logger.exception("Failed to create exec session")
+                await ws.send_text(_make_msg("error", message=error_str))
+                await ws.close(code=4003)
+                return
 
     sock = exec_session["socket"]
     exec_id = exec_session["exec_id"]
