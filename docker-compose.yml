@@ -1,0 +1,83 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: lluser
+      POSTGRES_PASSWORD: llpass
+      POSTGRES_DB: ll_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lluser -d ll_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 这个专门的虚拟服务用于在启动前自动构建学生的基础镜像
+  student-image-builder:
+    build:
+      context: ./docker/student-image
+      dockerfile: Dockerfile
+    image: linux-student:latest
+    command: ["echo", "Student base image linux-student:latest built successfully"]
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      student-image-builder:
+        condition: service_completed_successfully
+    volumes:
+      # 挂载 Docker Socket 以便后端容器可以控制宿主机的 Docker 来拉起学生容器
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8000:8000"
+    environment:
+      # 在容器内连接同处于该 docker-compose 网络的 postgres 服务
+      - LL_DATABASE_URL=postgresql+asyncpg://lluser:llpass@postgres:5432/ll_db
+      - LL_REDIS_URL=redis://redis:6379/0
+    env_file:
+      # 允许用户在 .env 文件中提供 LL_AI_API_KEY 等密钥
+      - .env
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    environment:
+      # 前端通过浏览器发起请求，所以对于用户来说，后端的地址仍然是宿主机的 localhost:8000
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_WS_URL=ws://localhost:8000
+
+volumes:
+  pgdata:
+
+networks:
+  default:
+    name: ll-student-net
+    driver: bridge

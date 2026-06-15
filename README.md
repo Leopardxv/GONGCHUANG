@@ -18,15 +18,14 @@ AI 驱动的互动式 Linux 在线学习平台。学生可以在真实的云端�
 
 ---
 
-## 🚀 详细复刻与部署指南
+## 🚀 一键部署与复刻指南 (推荐)
 
-请严格按照以下步骤进行本地复刻和运行。
+本项目已全面支持 Docker 容器化部署。无论你是 Windows, Mac 还是 Linux，只需满足基础条件即可一键把**所有环境**（前端、后端、数据库、缓存、终端镜像）全部拉起！
 
-### 1. 环境准备 (Prerequisites)
+### 1. 环境准备
 在开始之前，请确保您的开发机器上已安装以下软件：
-- **Node.js** (>= 20)
-- **Python** (>= 3.12)
-- **Docker & Docker Compose** (用于运行数据库和学生终端)
+- **Docker** 以及 **Docker Compose**
+  - *(注意：Windows 用户安装 Docker Desktop 后，系统会自动配置好这两项)*
 - **Git**
 - **DeepSeek API Key**：需要前往 [DeepSeek 开放平台](https://platform.deepseek.com) 申请一个 API Key。
 
@@ -36,103 +35,45 @@ git clone https://github.com/Leopardxv/GONGCHUANG.git
 cd GONGCHUANG
 ```
 
-### 3. 启动基础设施 (PostgreSQL & Redis)
-我们使用 Docker Compose 来快速启动数据库和缓存：
-```bash
-cd docker
-docker-compose up -d
-cd ..
-```
-*这会在后台启动端口为 `5432` 的 PG 数据库和 `6379` 的 Redis 服务。*
-
-### 4. 后端环境配置与启动 (Backend)
-
-**① 进入后端目录并创建虚拟环境：**
-```bash
-cd backend
-python -m venv .venv
-
-# Windows 激活虚拟环境:
-.venv\Scripts\activate
-# Mac/Linux 激活虚拟环境:
-source .venv/bin/activate
-```
-
-**② 安装 Python 依赖：**
-```bash
-pip install -r requirements.txt
-```
-
-**③ 配置环境变量：**
-复制示例配置文件并修改配置：
-```bash
-cp .env.example .env
-```
-用文本编辑器打开 `backend/.env`，确保填写以下必填项：
+### 3. 配置密钥 (只需一次)
+在项目根目录下创建一个 `.env` 文件（如果没有提供，可以自己新建一个），并填入以下必须的内容：
 ```env
-# 数据库与 Redis (默认值通常无需修改)
-LL_DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/linux_learning
-LL_REDIS_URL=redis://localhost:6379/0
-
-# JWT 加密密钥 (随便填一串复杂的随机字符)
+# JWT 加密密钥 (随便填一串复杂的随机字符即可)
 LL_JWT_SECRET=your_super_secret_jwt_key_here
 
-# 必填：你的 DeepSeek API Key
+# 必填：你的 DeepSeek API Key，用于驱动 AI 对话和代码分析
 LL_AI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-**④ 初始化数据库表结构：**
-在虚拟环境激活状态下，执行数据库迁移（Alembic）：
+### 4. 一键启动！🚀
+在项目根目录下运行以下命令：
 ```bash
-alembic upgrade head
+docker-compose up -d --build
 ```
 
-### 5. 构建学生终端基础镜像
-为了让系统能够为学生创建隔离的终端，您必须先在本地构建基础镜像：
+**就这么简单！**
+这行命令会在后台自动执行以下所有操作，您只需喝杯咖啡等待（首次构建可能需要几分钟）：
+- 自动拉起 `PostgreSQL` 数据库和 `Redis` 缓存。
+- 自动构建 `linux-student:latest` 学生终端的专属基础镜像。
+- 自动构建并启动 FastAPI 后端（内置依赖安装与数据库自动初始化迁移）。
+- 自动构建并启动 Next.js 前端应用。
+
+### 5. 访问项目
+- 浏览器打开：`http://localhost:3000`
+- 注册一个账号，即可开始 Linux 学习之旅！
+- （可选）后端 API 接口文档地址为：`http://localhost:8000/docs`
+
+### 6. 停止与关闭
+如果您想停止并移除容器，只需在项目根目录运行：
 ```bash
-# 退回到项目根目录
-cd ..
-
-# 创建专属 Docker 网络
-docker network create ll-student-net
-
-# 构建基础镜像 (必须执行)
-bash scripts/build_student_image.sh
+docker-compose down
 ```
-
-### 6. 前端环境配置与启动 (Frontend)
-```bash
-cd frontend
-
-# 安装前端依赖
-npm install
-
-# (可选) 检查前端环境变量
-# 前端默认连接 http://localhost:8000，如果你的后端端口不同，需在 frontend 下创建 .env.local 覆盖。
-
-# 启动前端开发服务器
-npm run dev
-```
-
-此时，您可以通过浏览器访问 `http://localhost:3000` 来体验项目。后端 API 接口文档地址为：`http://localhost:8000/docs`。
 
 ---
 
-## ⚡ 快捷一键启停脚本 (推荐在环境搭建完成后使用)
+## 🛠 开发模式 (传统部署)
 
-如果您**已经完成了上面的环境搭建（依赖已安装、环境变量已配置、镜像已构建）**，以后每次开发/使用时，无需再手动一行行敲命令。
-
-项目根目录下提供了非常方便的**一键启停脚本**：
-
-### Windows 用户
-- **启动服务**：双击运行根目录下的 `start.bat`
-- **停止服务**：双击运行根目录下的 `stop.bat`
-
-### Mac / Linux 用户
-- **启动服务**：在终端执行 `bash start.sh`
-- **停止服务**：在终端执行 `bash stop.sh`
-
-*(注意：一键启动脚本默认不会自动拉起 docker-compose 的 PG/Redis，请确保 Docker 桌面端已经运行并且相关容器处于启动状态)*
+如果您需要进行代码级的二次开发并频繁调试，可以选择传统的本地运行方式。请参考项目内的 `start.bat` (Windows) 或 `start.sh` (Linux/Mac) 脚本，配合手动安装 Node.js 和 Python 环境进行启动。传统开发模式详细步骤可参考历史提交记录或通过 `.sh` 脚本自行探索。
 
 ---
 
