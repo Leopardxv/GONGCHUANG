@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useCallback, useRef, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/stores/authStore";
 import { authService } from "@/services/auth.service";
 import { exercisesForPage } from "@/data/exercises";
@@ -329,9 +329,10 @@ function PDFViewer({
 }
 
 /* ── Page ── */
-export default function TextbookPage() {
+function TextbookContent() {
   const { user, isAuthenticated, isLoading, setUser } = useAuthStore();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [toc, setToc] = useState<Chapter[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedPage, setDebouncedPage] = useState(1);
@@ -353,6 +354,16 @@ export default function TextbookPage() {
       });
     }
   }, []);
+
+  useEffect(() => {
+    const pStr = searchParams.get("page");
+    if (pStr) {
+      const p = parseInt(pStr, 10);
+      if (p > 0 && p !== currentPage) {
+        setCurrentPage(p);
+      }
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -505,5 +516,17 @@ export default function TextbookPage() {
         />
       </div>
     </div>
+  );
+}
+
+export default function TextbookPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-[var(--color-bg)]">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-accent)]" />
+      </div>
+    }>
+      <TextbookContent />
+    </Suspense>
   );
 }
